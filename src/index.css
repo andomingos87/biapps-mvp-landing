@@ -114,3 +114,19 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* Enhanced navigation link with underline effect */
+.nav-link::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: #FCA311;
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
