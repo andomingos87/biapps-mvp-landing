@@ -1,38 +1,24 @@
-
 import { Badge } from "@/components/ui/badge";
-import { 
-  Trophy, 
-  Zap, 
-  Users, 
-  Settings
-} from "lucide-react";
-
+import { Trophy, Zap, Users, Settings } from "lucide-react";
 const Differentials = () => {
-  const differentials = [
-    {
-      icon: <Zap className="h-8 w-8 text-primary" />,
-      title: "Desenvolvimento Ágil",
-      description: "Metodologia que permite entregas rápidas e contínuas, com flexibilidade para adaptações durante o processo."
-    },
-    {
-      icon: <Users className="h-8 w-8 text-primary" />,
-      title: "Equipe Multidisciplinar",
-      description: "Profissionais especializados em diversas áreas da tecnologia para oferecer soluções completas."
-    },
-    {
-      icon: <Settings className="h-8 w-8 text-primary" />,
-      title: "Tecnologias de Ponta",
-      description: "Utilizamos as tecnologias mais modernas e eficientes do mercado para garantir a qualidade dos nossos projetos."
-    },
-    {
-      icon: <Trophy className="h-8 w-8 text-primary" />,
-      title: "Compromisso com Prazos",
-      description: "Entregas dentro do prazo acordado, com transparência e comunicação constante durante todo o processo."
-    },
-  ];
-
-  return (
-    <section id="differentials" className="section bg-gray-50">
+  const differentials = [{
+    icon: <Zap className="h-8 w-8 text-primary" />,
+    title: "Desenvolvimento Ágil",
+    description: "Metodologia que permite entregas rápidas e contínuas, com flexibilidade para adaptações durante o processo."
+  }, {
+    icon: <Users className="h-8 w-8 text-primary" />,
+    title: "Equipe Multidisciplinar",
+    description: "Profissionais especializados em diversas áreas da tecnologia para oferecer soluções completas."
+  }, {
+    icon: <Settings className="h-8 w-8 text-primary" />,
+    title: "Tecnologias de Ponta",
+    description: "Utilizamos as tecnologias mais modernas e eficientes do mercado para garantir a qualidade dos nossos projetos."
+  }, {
+    icon: <Trophy className="h-8 w-8 text-primary" />,
+    title: "Compromisso com Prazos",
+    description: "Entregas dentro do prazo acordado, com transparência e comunicação constante durante todo o processo."
+  }];
+  return <section id="differentials" className="section bg-gray-50">
       <div className="container-custom">
         <div className="text-center mb-16">
           <Badge variant="outline" className="bg-primary/10 text-primary border-primary mb-4">O QUE NOS DIFERENCIA</Badge>
@@ -44,15 +30,13 @@ const Differentials = () => {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
-          {differentials.map((item, index) => (
-            <div key={index} className="text-center">
+          {differentials.map((item, index) => <div key={index} className="text-center">
               <div className="mx-auto bg-white p-6 rounded-full shadow-md inline-flex items-center justify-center mb-6">
                 {item.icon}
               </div>
               <h3 className="text-xl font-bold mb-3">{item.title}</h3>
               <p className="text-gray-700">{item.description}</p>
-            </div>
-          ))}
+            </div>)}
         </div>
 
         <div className="mt-20 bg-white shadow-lg rounded-lg overflow-hidden">
@@ -65,19 +49,17 @@ const Differentials = () => {
                 </p>
                 
                 <div className="space-y-4">
-                  {["Discovery e Planejamento", "Design e Prototipação", "Desenvolvimento Ágil", "Testes e Validação", "Lançamento e Suporte"].map((step, idx) => (
-                    <div key={idx} className="flex items-center">
+                  {["Discovery e Planejamento", "Design e Prototipação", "Desenvolvimento Ágil", "Testes e Validação", "Lançamento e Suporte"].map((step, idx) => <div key={idx} className="flex items-center">
                       <div className="bg-primary text-white w-6 h-6 rounded-full flex items-center justify-center text-sm mr-3">
                         {idx + 1}
                       </div>
                       <span className="text-gray-800 font-medium">{step}</span>
-                    </div>
-                  ))}
+                    </div>)}
                 </div>
               </div>
             </div>
             <div className="bg-secondary p-10 text-white">
-              <h3 className="text-2xl font-bold mb-6">Por que escolher a BiApps?</h3>
+              <h3 className="text-2xl font-bold mb-6 text-slate-50">Por que escolher a BiApps?</h3>
               
               <ul className="space-y-4">
                 <li className="flex items-start">
@@ -125,8 +107,6 @@ const Differentials = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default Differentials;
