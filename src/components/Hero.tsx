@@ -42,8 +42,8 @@ const Hero = () => {
             <div className="absolute -top-10 -left-10 w-40 h-40 bg-primary/10 rounded-full filter blur-3xl"></div>
             <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-secondary/10 rounded-full filter blur-3xl"></div>
             <img 
-              src="/placeholder.svg" 
-              alt="BiApps Development" 
+              src="/lovable-uploads/1d5cee63-bf8a-4c13-8331-7f0113f61722.png" 
+              alt="Equipe desenvolvendo software" 
               className="relative z-10 max-w-full h-auto object-cover rounded-2xl shadow-2xl border border-gray-100"
               style={{maxHeight: "450px"}}
             />
