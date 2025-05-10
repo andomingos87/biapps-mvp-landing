@@ -8,7 +8,7 @@ const Hero = () => {
       <div className="container-custom grid md:grid-cols-2 gap-12 items-center">
         <div className="order-2 md:order-1 animate-fade-in">
           <div className="inline-block bg-primary/10 text-primary font-medium px-4 py-2 rounded-full mb-4">
-            Desenvolvimento de Software para MVPs
+            Desenvolvimento de Software para Startups
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
             Desenvolvimento <span className="gradient-text">ágil</span> de <span className="text-primary">MVPs</span> <span className="whitespace-nowrap">em até <span className="text-secondary flex items-center inline-flex"><Zap className="h-8 w-8 mr-1 inline" /> 4 semanas</span></span>
