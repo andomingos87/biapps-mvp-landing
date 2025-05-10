@@ -2,10 +2,13 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -40,10 +43,33 @@ const Header = () => {
     }
   };
 
+  const handleLogoClick = () => {
+    if (location.pathname === '/') {
+      // If already on home page, smooth scroll to top
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    } else {
+      // If on another page, navigate to home
+      navigate('/');
+    }
+    
+    // Close mobile menu if open
+    if (isMenuOpen) {
+      setIsMenuOpen(false);
+    }
+  };
+
   return <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-sm shadow-md' : 'bg-white'}`}>
       <div className="container-custom flex justify-between items-center h-20">
         <div className="flex items-center">
-          <img src="/lovable-uploads/0a5cb9e3-308c-4f90-b50a-1ab6d500a9d9.png" alt="BiApps Logo" className="h-10" />
+          <img 
+            src="/lovable-uploads/0a5cb9e3-308c-4f90-b50a-1ab6d500a9d9.png" 
+            alt="BiApps Logo" 
+            className="h-10 cursor-pointer" 
+            onClick={handleLogoClick}
+          />
         </div>
         
         {/* Mobile menu button */}
