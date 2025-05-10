@@ -11,7 +11,7 @@ const Hero = () => {
             Desenvolvimento de Software para Startups
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            Desenvolvimento <span className="gradient-text">ágil</span> de <span className="text-primary">MVPs</span> <span className="whitespace-nowrap">em até <span className="text-secondary flex items-center inline-flex"><Zap className="h-8 w-8 mr-1 inline" /> 4 semanas</span></span>
+            Desenvolvemos <span className="text-primary">MVPs</span> <span className="whitespace-nowrap">em até <span className="text-secondary flex items-center inline-flex"><Zap className="h-8 w-8 mr-1 inline" /> 4 semanas</span></span>
           </h1>
           <p className="text-gray-700 text-lg md:text-xl mb-8 leading-relaxed">
             Especialistas em desenvolvimento web, mobile, agentes de IA e automações para acelerar o crescimento do seu negócio.
