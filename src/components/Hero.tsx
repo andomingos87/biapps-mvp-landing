@@ -29,7 +29,7 @@ const Hero = () => {
                   {i}
                 </div>)}
             </div>
-            <p className="text-gray-600 text-sm">Mais de <span className="font-bold text-secondary">150+</span> projetos entregues com sucesso</p>
+            <p className="text-gray-600 text-sm">Mais de <span className="font-bold text-secondary">25+</span> projetos entregues com sucesso</p>
           </div>
         </div>
         <div className="order-1 md:order-2 flex justify-center">
