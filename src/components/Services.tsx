@@ -2,8 +2,11 @@
 import { Code, Smartphone, Zap, Settings } from "lucide-react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const Services = () => {
+  const navigate = useNavigate();
+  
   const services = [
     {
       title: "Desenvolvimento Web",
@@ -11,7 +14,8 @@ const Services = () => {
       icon: <Code className="h-10 w-10 text-primary" />,
       features: ["Sistemas Web", "E-commerce", "Portais", "Dashboards"],
       gradient: "from-amber-50 to-amber-100",
-      iconBg: "bg-amber-100"
+      iconBg: "bg-amber-100",
+      path: "/web-development"
     },
     {
       title: "Desenvolvimento Mobile",
@@ -19,7 +23,8 @@ const Services = () => {
       icon: <Smartphone className="h-10 w-10 text-primary" />,
       features: ["Apps iOS", "Apps Android", "Flutter", "React Native"],
       gradient: "from-blue-50 to-blue-100",
-      iconBg: "bg-blue-100"
+      iconBg: "bg-blue-100",
+      path: "/mobile-development"
     },
     {
       title: "Agentes de IA",
@@ -27,7 +32,8 @@ const Services = () => {
       icon: <Zap className="h-10 w-10 text-primary" />,
       features: ["Chatbots", "Assistentes Virtuais", "Análise de Dados", "Machine Learning"],
       gradient: "from-purple-50 to-purple-100",
-      iconBg: "bg-purple-100"
+      iconBg: "bg-purple-100",
+      path: "/ai-agents"
     },
     {
       title: "Automação de Processos",
@@ -35,7 +41,8 @@ const Services = () => {
       icon: <Settings className="h-10 w-10 text-primary" />,
       features: ["RPA", "Integração de Sistemas", "Fluxos de Trabalho", "ETL"],
       gradient: "from-green-50 to-green-100",
-      iconBg: "bg-green-100"
+      iconBg: "bg-green-100",
+      path: "/automation"
     },
   ];
 
@@ -55,7 +62,11 @@ const Services = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {services.map((service, index) => (
-            <Card key={index} className={`border-none shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br ${service.gradient} overflow-hidden group`}>
+            <Card 
+              key={index} 
+              className={`border-none shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br ${service.gradient} overflow-hidden group cursor-pointer`}
+              onClick={() => navigate(service.path)}
+            >
               <CardHeader className="pb-0">
                 <div className={`${service.iconBg} rounded-full w-16 h-16 flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform`}>
                   {service.icon}
