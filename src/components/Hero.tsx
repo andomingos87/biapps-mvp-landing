@@ -1,17 +1,14 @@
-
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap } from "lucide-react";
-
 const Hero = () => {
-  return (
-    <section className="bg-gradient-to-b from-white to-gray-50 py-24 md:py-32">
+  return <section className="bg-gradient-to-b from-white to-gray-50 py-24 md:py-32">
       <div className="container-custom grid md:grid-cols-2 gap-12 items-center">
         <div className="order-2 md:order-1 animate-fade-in">
           <div className="inline-block bg-primary/10 text-primary font-medium px-4 py-2 rounded-full mb-4">
             Desenvolvimento de Software para Startups
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            Desenvolvemos <span className="text-primary">MVPs</span> <span className="whitespace-nowrap">em até <span className="text-secondary flex items-center inline-flex"><Zap className="h-8 w-8 mr-1 inline" /> 4 semanas</span></span>
+            Desenvolvemos  <span className="whitespace-nowrap">em até <span className="text-secondary flex items-center inline-flex"><Zap className="h-8 w-8 mr-1 inline" /> 4 semanas</span></span>
           </h1>
           <p className="text-gray-700 text-lg md:text-xl mb-8 leading-relaxed">
             Especialistas em desenvolvimento web, mobile, agentes de IA e automações para acelerar o crescimento do seu negócio.
@@ -28,11 +25,9 @@ const Hero = () => {
           
           <div className="flex items-center mt-10 space-x-4">
             <div className="flex -space-x-4">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="w-10 h-10 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs font-medium text-gray-600">
+              {[1, 2, 3].map(i => <div key={i} className="w-10 h-10 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs font-medium text-gray-600">
                   {i}
-                </div>
-              ))}
+                </div>)}
             </div>
             <p className="text-gray-600 text-sm">Mais de <span className="font-bold text-secondary">150+</span> projetos entregues com sucesso</p>
           </div>
@@ -41,12 +36,9 @@ const Hero = () => {
           <div className="relative animate-fade-in">
             <div className="absolute -top-10 -left-10 w-40 h-40 bg-primary/10 rounded-full filter blur-3xl"></div>
             <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-secondary/10 rounded-full filter blur-3xl"></div>
-            <img 
-              src="/lovable-uploads/1d5cee63-bf8a-4c13-8331-7f0113f61722.png" 
-              alt="Equipe desenvolvendo software" 
-              className="relative z-10 max-w-full h-auto object-cover rounded-2xl shadow-2xl border border-gray-100"
-              style={{maxHeight: "450px"}}
-            />
+            <img src="/lovable-uploads/1d5cee63-bf8a-4c13-8331-7f0113f61722.png" alt="Equipe desenvolvendo software" className="relative z-10 max-w-full h-auto object-cover rounded-2xl shadow-2xl border border-gray-100" style={{
+            maxHeight: "450px"
+          }} />
             <div className="absolute -bottom-5 -right-5 bg-white p-4 rounded-lg shadow-xl z-20">
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
@@ -60,15 +52,11 @@ const Hero = () => {
       <div className="container-custom mt-20">
         <div className="flex flex-wrap items-center justify-center gap-10 opacity-70">
           <p className="text-gray-500 font-medium">Utilizado por:</p>
-          {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="grayscale hover:grayscale-0 transition-all">
+          {[1, 2, 3, 4, 5].map(i => <div key={i} className="grayscale hover:grayscale-0 transition-all">
               <div className="bg-gray-200 h-8 w-24 rounded"></div>
-            </div>
-          ))}
+            </div>)}
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default Hero;
