@@ -13,9 +13,10 @@ const AboutUs = () => {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <img 
-              src="/placeholder.svg" 
-              alt="Equipe BiApps" 
-              className="rounded-lg shadow-lg w-full h-auto"
+              src="/lovable-uploads/32fa30c9-3b6a-477b-8575-7f503ad80e47.png" 
+              alt="Equipe BiApps trabalhando em projetos" 
+              className="rounded-lg shadow-lg w-full h-auto object-cover"
+              style={{maxHeight: "500px"}}
             />
           </div>
           <div>
