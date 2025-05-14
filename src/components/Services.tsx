@@ -1,6 +1,6 @@
 
-import { Code, Smartphone, Zap, Settings } from "lucide-react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Code, Smartphone, Zap } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 
@@ -9,40 +9,34 @@ const Services = () => {
   
   const services = [
     {
-      title: "Desenvolvimento Web",
-      description: "Sites responsivos, aplicações web e plataformas personalizadas com as melhores tecnologias do mercado.",
+      title: "MVP Web em até 4 semanas",
       icon: <Code className="h-10 w-10 text-primary" />,
-      features: ["Sistemas Web", "E-commerce", "Portais", "Dashboards"],
+      features: ["Aplicações Web Responsivas", "Bubble, Supabase e N8N"],
+      details: "Até 3 funcionalidades",
+      price: "A partir de R$17.900",
       gradient: "from-amber-50 to-amber-100",
       iconBg: "bg-amber-100",
       path: "/web-development"
     },
     {
-      title: "Desenvolvimento Mobile",
-      description: "Aplicativos nativos e híbridos para iOS e Android que oferecem a melhor experiência ao usuário.",
+      title: "MVP Mobile em até 4 semanas",
       icon: <Smartphone className="h-10 w-10 text-primary" />,
-      features: ["Apps iOS", "Apps Android", "Flutter", "React Native"],
+      features: ["Aplicações Mobile", "Flutterflow, Supabase e N8N"],
+      details: "Até 3 funcionalidades",
+      price: "A partir de R$19.900",
       gradient: "from-blue-50 to-blue-100",
       iconBg: "bg-blue-100",
       path: "/mobile-development"
     },
     {
-      title: "Agentes de IA",
-      description: "Soluções inteligentes com IA para automatizar processos e melhorar a tomada de decisão.",
+      title: "MVP Agente de IA em até 4 semanas",
       icon: <Zap className="h-10 w-10 text-primary" />,
-      features: ["Chatbots", "Assistentes Virtuais", "Análise de Dados", "Machine Learning"],
+      features: ["Agentes de IA", "Flutterflow, Supabase e N8N"],
+      details: "Até 3 funcionalidades",
+      price: "A partir de R$19.900",
       gradient: "from-purple-50 to-purple-100",
       iconBg: "bg-purple-100",
       path: "/ai-agents"
-    },
-    {
-      title: "Automação de Processos",
-      description: "Otimize suas operações com automações inteligentes que economizam tempo e recursos.",
-      icon: <Settings className="h-10 w-10 text-primary" />,
-      features: ["RPA", "Integração de Sistemas", "Fluxos de Trabalho", "ETL"],
-      gradient: "from-green-50 to-green-100",
-      iconBg: "bg-green-100",
-      path: "/automation"
     },
   ];
 
@@ -60,12 +54,11 @@ const Services = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {services.map((service, index) => (
             <Card 
               key={index} 
               className={`border-none shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br ${service.gradient} overflow-hidden group cursor-pointer`}
-              onClick={() => navigate(service.path)}
             >
               <CardHeader className="pb-0">
                 <div className={`${service.iconBg} rounded-full w-16 h-16 flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform`}>
@@ -73,11 +66,8 @@ const Services = () => {
                 </div>
                 <CardTitle className="text-xl font-bold">{service.title}</CardTitle>
               </CardHeader>
-              <CardContent className="pt-4">
-                <CardDescription className="text-gray-700 mb-6 text-base">
-                  {service.description}
-                </CardDescription>
-                <ul className="space-y-2">
+              <CardContent className="pt-4 flex flex-col h-full">
+                <ul className="space-y-2 mb-6">
                   {service.features.map((feature, idx) => (
                     <li key={idx} className="flex items-center text-gray-700">
                       <div className="w-2 h-2 bg-primary rounded-full mr-2"></div>
@@ -85,12 +75,19 @@ const Services = () => {
                     </li>
                   ))}
                 </ul>
+                
+                <div className="mt-auto space-y-4">
+                  <p className="text-gray-700">{service.details}</p>
+                  <p className="font-bold text-lg text-secondary">{service.price}</p>
+                  
+                  <Button 
+                    className="w-full mt-4"
+                    onClick={() => navigate(service.path)}
+                  >
+                    Saiba mais
+                  </Button>
+                </div>
               </CardContent>
-              <CardFooter className="pt-0">
-                <Button variant="link" className="text-secondary p-0 group-hover:text-primary transition-colors">
-                  Saiba mais
-                </Button>
-              </CardFooter>
             </Card>
           ))}
         </div>
