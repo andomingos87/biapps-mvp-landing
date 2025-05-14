@@ -9,7 +9,7 @@ const Services = () => {
   
   const services = [
     {
-      title: "MVP Web em até 4 semanas",
+      title: "MVP Web",
       icon: <Code className="h-10 w-10 text-primary" />,
       features: ["Aplicações Web Responsivas", "Bubble, Supabase e N8N"],
       details: "Até 3 funcionalidades",
@@ -19,7 +19,7 @@ const Services = () => {
       path: "/web-development"
     },
     {
-      title: "MVP Mobile em até 4 semanas",
+      title: "MVP Mobile",
       icon: <Smartphone className="h-10 w-10 text-primary" />,
       features: ["Aplicações Mobile", "Flutterflow, Supabase e N8N"],
       details: "Até 3 funcionalidades",
@@ -29,7 +29,7 @@ const Services = () => {
       path: "/mobile-development"
     },
     {
-      title: "MVP Agente de IA em até 4 semanas",
+      title: "MVP Agente de IA",
       icon: <Zap className="h-10 w-10 text-primary" />,
       features: ["Agentes de IA", "Flutterflow, Supabase e N8N"],
       details: "Até 3 funcionalidades",
