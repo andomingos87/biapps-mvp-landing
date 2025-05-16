@@ -3,14 +3,20 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap } from "lucide-react";
 import BudgetRequestModal from "./BudgetRequestModal";
+import CalendlyModal from "./CalendlyModal";
 
 const Hero = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
+  const [isCalendlyModalOpen, setIsCalendlyModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<string | undefined>(undefined);
   
-  const openModal = (serviceType?: string) => {
+  const openBudgetModal = (serviceType?: string) => {
     setSelectedService(serviceType);
-    setIsModalOpen(true);
+    setIsBudgetModalOpen(true);
+  };
+  
+  const openCalendlyModal = () => {
+    setIsCalendlyModalOpen(true);
   };
 
   return <section className="bg-gradient-to-b from-white to-gray-50 py-24 md:py-32">
@@ -28,7 +34,7 @@ const Hero = () => {
           <div className="flex flex-wrap gap-4">
             <Button 
               className="bg-primary hover:bg-primary/90 text-white px-6 py-6 text-lg shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all"
-              onClick={() => openModal("mvp")}
+              onClick={() => openBudgetModal("mvp")}
             >
               Iniciar projeto
               <ArrowRight className="ml-2 h-5 w-5" />
@@ -36,7 +42,7 @@ const Hero = () => {
             <Button 
               variant="outline" 
               className="border-2 border-secondary text-secondary hover:bg-secondary/10 px-6 py-6 text-lg transition-colors"
-              onClick={() => openModal()}
+              onClick={openCalendlyModal}
             >
               Agendar conversa
             </Button>
@@ -78,9 +84,14 @@ const Hero = () => {
       </div>
 
       <BudgetRequestModal 
-        open={isModalOpen} 
-        onOpenChange={setIsModalOpen}
+        open={isBudgetModalOpen} 
+        onOpenChange={setIsBudgetModalOpen}
         service={selectedService}
+      />
+      
+      <CalendlyModal 
+        open={isCalendlyModalOpen} 
+        onOpenChange={setIsCalendlyModalOpen} 
       />
     </section>;
 };

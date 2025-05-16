@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import BudgetRequestModal from "./BudgetRequestModal";
+import CalendlyModal from "./CalendlyModal";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
+  const [isCalendlyModalOpen, setIsCalendlyModalOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -63,8 +65,8 @@ const Header = () => {
     }
   };
 
-  const openModal = () => {
-    setIsModalOpen(true);
+  const openCalendlyModal = () => {
+    setIsCalendlyModalOpen(true);
     if (isMenuOpen) {
       setIsMenuOpen(false);
     }
@@ -95,7 +97,7 @@ const Header = () => {
           <a href="#faq" onClick={(e) => smoothScroll(e, 'faq')} className="text-gray-700 hover:text-primary font-medium transition-colors relative nav-link">FAQ</a>
           <Button 
             className="bg-primary hover:bg-primary/90 text-white shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all"
-            onClick={openModal}
+            onClick={openCalendlyModal}
           >
             Começar agora
           </Button>
@@ -121,7 +123,7 @@ const Header = () => {
               </a>
               <Button 
                 className="bg-primary hover:bg-primary/90 text-white w-full py-6 shadow-md shadow-primary/20" 
-                onClick={openModal}
+                onClick={openCalendlyModal}
               >
                 Contato
               </Button>
@@ -129,9 +131,9 @@ const Header = () => {
           </div>}
       </div>
 
-      <BudgetRequestModal 
-        open={isModalOpen} 
-        onOpenChange={setIsModalOpen}
+      <CalendlyModal 
+        open={isCalendlyModalOpen} 
+        onOpenChange={setIsCalendlyModalOpen}
       />
     </header>;
 };
