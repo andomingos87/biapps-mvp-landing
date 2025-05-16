@@ -10,7 +10,7 @@ const Services = () => {
   const services = [
     {
       title: "MVP Web",
-      icon: <Code className="h-10 w-10 text-primary" />,
+      icon: <Code className="h-8 w-8 text-primary" />,
       description: "Transforme sua ideia em uma aplicação web funcional, responsiva e pronta para validar com clientes reais.",
       delivery: "Entrega em até 4 semanas",
       benefits: [
@@ -20,14 +20,13 @@ const Services = () => {
         "Hospedagem e suporte técnico por 1 mês"
       ],
       price: "A partir de R$17.900",
-      gradient: "from-amber-50 via-amber-100 to-amber-200",
-      iconBg: "bg-amber-100",
+      iconColor: "text-primary",
       path: "/web-development",
       ctaText: "Solicitar orçamento"
     },
     {
       title: "MVP Mobile",
-      icon: <Smartphone className="h-10 w-10 text-primary" />,
+      icon: <Smartphone className="h-8 w-8 text-primary" />,
       description: "Desenvolva um aplicativo mobile nativo para iOS e Android com experiência de usuário otimizada.",
       delivery: "Entrega em até 4 semanas",
       benefits: [
@@ -37,14 +36,13 @@ const Services = () => {
         "Publicação nas lojas App Store e Google Play"
       ],
       price: "A partir de R$19.900",
-      gradient: "from-blue-50 via-blue-100 to-blue-200",
-      iconBg: "bg-blue-100",
+      iconColor: "text-primary",
       path: "/mobile-development",
       ctaText: "Solicitar orçamento"
     },
     {
       title: "MVP Agente de IA",
-      icon: <Zap className="h-10 w-10 text-primary" />,
+      icon: <Zap className="h-8 w-8 text-primary" />,
       description: "Crie um assistente virtual inteligente que automatiza tarefas e oferece suporte 24/7 para seus clientes.",
       delivery: "Entrega em até 4 semanas",
       benefits: [
@@ -54,8 +52,7 @@ const Services = () => {
         "Melhoria contínua com machine learning"
       ],
       price: "A partir de R$19.900",
-      gradient: "from-purple-50 via-purple-100 to-purple-200",
-      iconBg: "bg-purple-100",
+      iconColor: "text-primary",
       path: "/ai-agents",
       ctaText: "Solicitar orçamento"
     },
@@ -79,10 +76,10 @@ const Services = () => {
           {services.map((service, index) => (
             <Card 
               key={index} 
-              className={`border-none shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br ${service.gradient} overflow-hidden group cursor-pointer h-full flex flex-col`}
+              className="border border-gray-100 rounded-xl bg-white shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden group cursor-pointer h-full flex flex-col"
             >
               <CardHeader className="pb-2">
-                <div className={`${service.iconBg} rounded-full w-16 h-16 flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform`}>
+                <div className="rounded-full w-14 h-14 flex items-center justify-center mb-4 bg-gray-50 transform group-hover:scale-110 transition-transform">
                   {service.icon}
                 </div>
                 <CardTitle className="text-2xl font-bold">{service.title}</CardTitle>
@@ -100,7 +97,7 @@ const Services = () => {
                   <ul className="space-y-2">
                     {service.benefits.map((benefit, idx) => (
                       <li key={idx} className="flex items-start gap-2 text-gray-700">
-                        <Check className="min-w-5 h-5 text-green-600 mt-0.5" />
+                        <Check className="min-w-5 h-5 text-primary mt-0.5" />
                         <span>{benefit}</span>
                       </li>
                     ))}
