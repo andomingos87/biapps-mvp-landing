@@ -1,19 +1,23 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Zap } from "lucide-react";
+import { ArrowRight, Zap, Circle } from "lucide-react";
 import BudgetRequestModal from "./BudgetRequestModal";
 import CalendlyModal from "./CalendlyModal";
+
 const Hero = () => {
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
   const [isCalendlyModalOpen, setIsCalendlyModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<string | undefined>(undefined);
+
   const openBudgetModal = (serviceType?: string) => {
     setSelectedService(serviceType);
     setIsBudgetModalOpen(true);
   };
+
   const openCalendlyModal = () => {
     setIsCalendlyModalOpen(true);
   };
+
   return <section className="bg-gradient-to-b from-white to-gray-50 py-24 md:py-32">
       <div className="container-custom grid md:grid-cols-2 gap-12 items-center">
         <div className="order-2 md:order-1 animate-fade-in">
@@ -54,7 +58,10 @@ const Hero = () => {
           }} />
             <div className="absolute -bottom-5 -right-5 bg-white p-4 rounded-lg shadow-xl z-20">
               <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                <div className="relative">
+                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                  <div className="absolute top-0 left-0 w-3 h-3 bg-green-500 rounded-full animate-ping opacity-75"></div>
+                </div>
                 <p className="font-medium">Agenda aberta para novos projetos</p>
               </div>
             </div>
@@ -76,4 +83,5 @@ const Hero = () => {
       <CalendlyModal open={isCalendlyModalOpen} onOpenChange={setIsCalendlyModalOpen} />
     </section>;
 };
+
 export default Hero;
