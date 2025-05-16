@@ -1,11 +1,19 @@
-
 import { z } from "zod";
 
-// Form validation schema
+// Form validation schema with enhanced validation
 export const formSchema = z.object({
-  fullName: z.string().min(3, { message: "Nome é obrigatório" }),
-  email: z.string().email({ message: "E-mail inválido" }),
-  whatsapp: z.string().min(10, { message: "WhatsApp inválido" }),
+  fullName: z.string().min(3, { message: "Nome completo é obrigatório" }),
+  email: z
+    .string()
+    .email({ message: "E-mail inválido" })
+    .min(5, { message: "E-mail é obrigatório" }),
+  whatsapp: z
+    .string()
+    .min(10, { message: "WhatsApp inválido" })
+    .refine(
+      (val) => /^(?:\+55|55)?(?:\s|\()?(\d{2})(?:\s|\))?(?:\s|\-)?(9?\d{4})(?:\s|\-)?(\d{4})$/.test(val),
+      { message: "Formato de WhatsApp inválido" }
+    ),
   projectStage: z.string({
     required_error: "Por favor selecione uma opção",
   }),
@@ -20,7 +28,20 @@ export const formSchema = z.object({
   budget: z.string({
     required_error: "Por favor selecione uma opção",
   }),
-  budgetAmount: z.string().optional(),
+  budgetAmount: z
+    .string()
+    .optional()
+    .refine(
+      (val) => {
+        // If val is empty (undefined, null, or empty string), return true
+        if (!val) return true;
+        // Otherwise, make sure it contains numbers and optionally "R$" and currency formatting
+        return /^(?:R\$\s?)?(?:\d{1,3}(?:\.\d{3})*(?:,\d{2})?|\d+(?:,\d{2})?)$/.test(val);
+      },
+      {
+        message: "Valor deve ser um formato monetário válido",
+      }
+    ),
   scheduleCall: z.string({
     required_error: "Por favor selecione uma opção",
   }),
@@ -28,27 +49,31 @@ export const formSchema = z.object({
 
 export type FormData = z.infer<typeof formSchema>;
 
-// Form step structure
+// Form step structure with added icon names for better UI
 export const formSteps = [
   {
     title: "Dados pessoais",
     description: "Conte-nos quem você é",
     icon: "User",
+    fields: ["fullName", "email", "whatsapp"]
   },
   {
     title: "Sobre o projeto",
     description: "Detalhes iniciais do seu projeto",
     icon: "Briefcase",
+    fields: ["projectStage", "solutionTypes", "businessSegment"]
   },
   {
     title: "Expectativas",
     description: "Prazos e orçamento",
     icon: "Calendar",
+    fields: ["projectGoal", "deadline", "budget", "budgetAmount"]
   },
   {
     title: "Finalizar",
     description: "Último passo",
     icon: "CheckCircle",
+    fields: ["scheduleCall"]
   },
 ];
 

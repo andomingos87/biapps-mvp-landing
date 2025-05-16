@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import { ArrowRight, ArrowLeft, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { formSchema, FormData } from "./budget-request/schema";
 import { submitBudgetRequest } from "./budget-request/api";
+import { useFormNavigation } from "./budget-request/hooks/useFormNavigation";
 import StepIndicator from "./budget-request/StepIndicator";
 import PersonalInfoStep from "./budget-request/steps/PersonalInfoStep";
 import ProjectDetailsStep from "./budget-request/steps/ProjectDetailsStep";
@@ -34,8 +35,7 @@ const BudgetRequestModal = ({
 }: BudgetRequestModalProps) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
-
+  
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -51,13 +51,29 @@ const BudgetRequestModal = ({
       budgetAmount: "",
       scheduleCall: "",
     },
-    mode: "onChange",
+    mode: "onChange", // This enables real-time validation
   });
+  
+  // Use our custom form navigation hook
+  const { 
+    currentStep, 
+    nextStep, 
+    prevStep, 
+    goToStep,
+    isCurrentStepValid,
+    progressPercentage 
+  } = useFormNavigation({ form });
 
   // Function to handle form submission and step navigation
   const onSubmit = async (data: FormData) => {
     if (currentStep < 3) {
-      setCurrentStep(currentStep + 1);
+      // Trigger validation for the current step fields
+      form.trigger();
+      
+      // Only proceed if the current step is valid
+      if (isCurrentStepValid()) {
+        nextStep();
+      }
       return;
     }
 
@@ -73,7 +89,7 @@ const BudgetRequestModal = ({
       
       onOpenChange(false);
       form.reset();
-      setCurrentStep(0);
+      goToStep(0);
     } catch (error) {
       console.error("Erro ao enviar formulário:", error);
       toast({
@@ -88,25 +104,14 @@ const BudgetRequestModal = ({
 
   // Handle navigation between form steps
   const handleBackStep = () => {
-    setCurrentStep(Math.max(0, currentStep - 1));
+    prevStep();
   };
 
-  const handleNextStep = () => {
-    if (currentStep < 3) {
-      setCurrentStep(currentStep + 1);
+  // Conditionally click on steps but only allow going back
+  const handleStepClick = (stepIndex: number) => {
+    if (stepIndex < currentStep) {
+      goToStep(stepIndex);
     }
-  };
-
-  // Check if current step is complete to enable next button
-  const isStepComplete = () => {
-    // For the last step, verify that scheduleCall is filled
-    if (currentStep === 3) {
-      const { scheduleCall } = form.getValues();
-      return !!scheduleCall;
-    }
-    
-    // For other steps, allow proceeding (validation happens on submit)
-    return true;
   };
 
   // Render the appropriate step content based on currentStep
@@ -129,7 +134,7 @@ const BudgetRequestModal = ({
     <Dialog open={open} onOpenChange={(openState) => {
       if (!openState) {
         setTimeout(() => {
-          setCurrentStep(0);
+          goToStep(0);
           form.reset();
         }, 300);
       }
@@ -145,7 +150,11 @@ const BudgetRequestModal = ({
           </DialogDescription>
         </DialogHeader>
 
-        <StepIndicator currentStep={currentStep} />
+        <StepIndicator 
+          currentStep={currentStep} 
+          progressPercentage={progressPercentage} 
+          onStepClick={handleStepClick} 
+        />
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -169,10 +178,9 @@ const BudgetRequestModal = ({
               )}
               
               <Button
-                type="button"
+                type="submit"
                 className="px-6 py-6 text-base"
-                disabled={isSubmitting || !isStepComplete()}
-                onClick={currentStep < 3 ? handleNextStep : form.handleSubmit(onSubmit)}
+                disabled={isSubmitting}
               >
                 {currentStep < 3 ? (
                   <>
