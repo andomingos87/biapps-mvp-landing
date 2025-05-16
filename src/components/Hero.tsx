@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap, Circle } from "lucide-react";
@@ -38,7 +39,9 @@ const Hero = () => {
           
           <div className="flex items-center mt-10 space-x-4">
             <div className="flex -space-x-4">
-              {[1, 2, 3].map(i => {})}
+              {[1, 2, 3].map(i => (
+                <div key={i} className="w-8 h-8 rounded-full bg-gray-300 border-2 border-white"></div>
+              ))}
             </div>
             <p className="text-gray-600 text-sm">Mais de <span className="font-bold text-secondary">25+</span> projetos entregues com sucesso</p>
           </div>
