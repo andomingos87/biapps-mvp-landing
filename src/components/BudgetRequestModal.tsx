@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -134,7 +134,7 @@ const BudgetRequestModal = ({
   const watchBudget = form.watch("budget");
   
   // Atualiza o estado de exibição do campo de valor do orçamento quando o tipo de orçamento muda
-  React.useEffect(() => {
+  useEffect(() => {
     setShowBudgetInput(watchBudget === "yes" || watchBudget === "estimate");
   }, [watchBudget]);
 
