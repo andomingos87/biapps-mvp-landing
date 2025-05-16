@@ -60,7 +60,7 @@ const CalendlyModal = ({ open, onOpenChange }: CalendlyModalProps) => {
             <>
               <div 
                 className="calendly-inline-widget w-full h-full" 
-                data-url="https://calendly.com/biapps/30min"
+                data-url="https://calendly.com/biapps-dev1/30min"
                 style={{ minWidth: '320px' }}
               ></div>
               {isLoading && (
