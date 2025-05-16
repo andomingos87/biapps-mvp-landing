@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +15,8 @@ interface CalendlyModalProps {
 }
 
 const CalendlyModal = ({ open, onOpenChange }: CalendlyModalProps) => {
+  const [isLoading, setIsLoading] = useState(true);
+
   // Load Calendly script when the modal is opened
   useEffect(() => {
     if (open) {
@@ -23,8 +25,20 @@ const CalendlyModal = ({ open, onOpenChange }: CalendlyModalProps) => {
       script.async = true;
       document.body.appendChild(script);
 
+      // Set up event listener to hide loader when Calendly is ready
+      script.onload = () => {
+        // Wait a bit longer to ensure Calendly is fully initialized
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000);
+      };
+
       return () => {
-        document.body.removeChild(script);
+        // Clean up script when modal closes
+        if (document.body.contains(script)) {
+          document.body.removeChild(script);
+        }
+        setIsLoading(true);
       };
     }
   }, [open]);
@@ -46,32 +60,18 @@ const CalendlyModal = ({ open, onOpenChange }: CalendlyModalProps) => {
             <>
               <div 
                 className="calendly-inline-widget w-full h-full" 
-                data-url="https://calendly.com/d/demo"
+                data-url="https://calendly.com/biapps/30min"
                 style={{ minWidth: '320px' }}
               ></div>
-              <div className="absolute inset-0 flex items-center justify-center bg-white/80 calendly-loading">
-                <Loader2 className="h-8 w-8 text-primary animate-spin" />
-                <span className="ml-2 text-gray-700">Carregando calendário...</span>
-              </div>
+              {isLoading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-white/80">
+                  <Loader2 className="h-8 w-8 text-primary animate-spin" />
+                  <span className="ml-2 text-gray-700">Carregando calendário...</span>
+                </div>
+              )}
             </>
           )}
         </div>
-
-        <script
-          type="text/javascript"
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.onload = function() {
-                if (window.Calendly) {
-                  const loaders = document.querySelectorAll('.calendly-loading');
-                  loaders.forEach(loader => {
-                    loader.style.display = 'none';
-                  });
-                }
-              }
-            `,
-          }}
-        />
       </DialogContent>
     </Dialog>
   );
