@@ -3,21 +3,17 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap, Circle } from "lucide-react";
 import BudgetRequestModal from "./BudgetRequestModal";
 import CalendlyModal from "./CalendlyModal";
-
 const Hero = () => {
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
   const [isCalendlyModalOpen, setIsCalendlyModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<string | undefined>(undefined);
-
   const openBudgetModal = (serviceType?: string) => {
     setSelectedService(serviceType);
     setIsBudgetModalOpen(true);
   };
-
   const openCalendlyModal = () => {
     setIsCalendlyModalOpen(true);
   };
-
   return <section className="bg-gradient-to-b from-white to-gray-50 py-24 md:py-32">
       <div className="container-custom grid md:grid-cols-2 gap-12 items-center">
         <div className="order-2 md:order-1 animate-fade-in">
@@ -42,9 +38,7 @@ const Hero = () => {
           
           <div className="flex items-center mt-10 space-x-4">
             <div className="flex -space-x-4">
-              {[1, 2, 3].map(i => <div key={i} className="w-10 h-10 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs font-medium text-gray-600">
-                  {i}
-                </div>)}
+              {[1, 2, 3].map(i => {})}
             </div>
             <p className="text-gray-600 text-sm">Mais de <span className="font-bold text-secondary">25+</span> projetos entregues com sucesso</p>
           </div>
@@ -83,5 +77,4 @@ const Hero = () => {
       <CalendlyModal open={isCalendlyModalOpen} onOpenChange={setIsCalendlyModalOpen} />
     </section>;
 };
-
 export default Hero;
