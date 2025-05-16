@@ -1,35 +1,56 @@
 
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, PlusCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+
+interface CaseStudy {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  image_url: string;
+  tags: string[];
+  results: string;
+}
 
 const CaseStudies = () => {
-  const cases = [
-    {
-      title: "FinTech Mobile App",
-      category: "Aplicativo Mobile",
-      description: "Desenvolvimento de um aplicativo financeiro completo para iOS e Android que permite aos usuários gerenciar investimentos e realizar transações.",
-      image: "/placeholder.svg",
-      tags: ["React Native", "API RESTful", "Firebase"],
-      results: "+200% em transações"
-    },
-    {
-      title: "E-commerce B2B",
-      category: "Plataforma Web",
-      description: "Criação de uma plataforma de e-commerce B2B completa com catálogo personalizado, gestão de pedidos e integração com ERP.",
-      image: "/placeholder.svg",
-      tags: ["React", "Node.js", "MongoDB"],
-      results: "-40% em custos operacionais"
-    },
-    {
-      title: "Assistente Virtual",
-      category: "Agente de IA",
-      description: "Desenvolvimento de um assistente virtual baseado em IA para automatizar atendimento ao cliente e direcionar leads qualificados.",
-      image: "/placeholder.svg",
-      tags: ["Python", "TensorFlow", "API Integration"],
-      results: "+75% em satisfação"
-    },
-  ];
+  const [cases, setCases] = useState<CaseStudy[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCases = async () => {
+      setIsLoading(true);
+      const { data, error } = await supabase
+        .from("case_studies")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(6);
+
+      if (error) {
+        console.error("Erro ao buscar casos:", error);
+      } else {
+        setCases(data || []);
+      }
+      setIsLoading(false);
+    };
+
+    fetchCases();
+  }, []);
+
+  // Verificar se o usuário está autenticado
+  const handleAdminClick = async () => {
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
+      navigate("/admin/cases");
+    } else {
+      // Se não estiver autenticado, mostrar diálogo de login aqui ou redirecionar
+      alert("Você precisa estar autenticado para acessar o painel admin");
+    }
+  };
 
   return (
     <section id="cases" className="section bg-gradient-to-b from-gray-50 to-white py-24">
@@ -45,44 +66,60 @@ const CaseStudies = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {cases.map((caseStudy, index) => (
-            <div key={index} className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all group border border-gray-100">
-              <div className="h-52 bg-gray-200 relative overflow-hidden">
-                <img 
-                  src={caseStudy.image} 
-                  alt={caseStudy.title} 
-                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-                />
-                <Badge className="absolute top-4 left-4 bg-primary hover:bg-primary text-white shadow-md">
-                  {caseStudy.category}
-                </Badge>
-                <div className="absolute bottom-0 right-0 bg-white py-1 px-3 font-bold text-primary rounded-tl-lg">
-                  {caseStudy.results}
+        {isLoading ? (
+          <div className="text-center py-12">
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent align-[-0.125em]"></div>
+            <p className="mt-4">Carregando casos...</p>
+          </div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {cases.map((caseStudy) => (
+              <div key={caseStudy.id} className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all group border border-gray-100">
+                <div className="h-52 bg-gray-200 relative overflow-hidden">
+                  <img 
+                    src={caseStudy.image_url} 
+                    alt={caseStudy.title} 
+                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <Badge className="absolute top-4 left-4 bg-primary hover:bg-primary text-white shadow-md">
+                    {caseStudy.category}
+                  </Badge>
+                  <div className="absolute bottom-0 right-0 bg-white py-1 px-3 font-bold text-primary rounded-tl-lg">
+                    {caseStudy.results}
+                  </div>
+                </div>
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">{caseStudy.title}</h3>
+                  <p className="text-gray-700 mb-4">{caseStudy.description}</p>
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {caseStudy.tags.map((tag, idx) => (
+                      <Badge key={idx} variant="outline" className="bg-secondary/5 text-secondary border-secondary/20">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                  <Button variant="link" className="text-secondary p-0 flex items-center group">
+                    Ver caso completo
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Button>
                 </div>
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">{caseStudy.title}</h3>
-                <p className="text-gray-700 mb-4">{caseStudy.description}</p>
-                <div className="flex flex-wrap gap-2 mb-6">
-                  {caseStudy.tags.map((tag, idx) => (
-                    <Badge key={idx} variant="outline" className="bg-secondary/5 text-secondary border-secondary/20">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-                <Button variant="link" className="text-secondary p-0 flex items-center group">
-                  Ver caso completo
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
-        <div className="mt-12 text-center">
+        <div className="mt-12 flex justify-center space-x-4">
           <Button variant="outline" className="border-2 border-secondary text-secondary hover:bg-secondary/10 px-6 py-2 text-lg transition-colors">
             Ver mais casos
+          </Button>
+          
+          <Button 
+            variant="outline" 
+            className="border-2 border-primary text-primary hover:bg-primary/10 px-6 py-2 text-lg transition-colors flex items-center"
+            onClick={handleAdminClick}
+          >
+            <PlusCircle className="mr-2 h-5 w-5" />
+            Admin
           </Button>
         </div>
       </div>
