@@ -9,6 +9,99 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      budget_requests: {
+        Row: {
+          budget: string
+          business_segment: string
+          created_at: string
+          deadline: string
+          email: string
+          full_name: string
+          id: string
+          project_goal: string
+          project_stage: string
+          schedule_call: string
+          solution_types: string[]
+          whatsapp: string
+        }
+        Insert: {
+          budget: string
+          business_segment: string
+          created_at?: string
+          deadline: string
+          email: string
+          full_name: string
+          id?: string
+          project_goal: string
+          project_stage: string
+          schedule_call: string
+          solution_types: string[]
+          whatsapp: string
+        }
+        Update: {
+          budget?: string
+          business_segment?: string
+          created_at?: string
+          deadline?: string
+          email?: string
+          full_name?: string
+          id?: string
+          project_goal?: string
+          project_stage?: string
+          schedule_call?: string
+          solution_types?: string[]
+          whatsapp?: string
+        }
+        Relationships: []
+      }
+      leads: {
+        Row: {
+          budget: string | null
+          company: string | null
+          created_at: string
+          deadline: string | null
+          email: string
+          full_name: string
+          how_did_you_find: string | null
+          id: string
+          origem: string | null
+          position: string | null
+          project_description: string | null
+          project_type: string | null
+          whatsapp: string
+        }
+        Insert: {
+          budget?: string | null
+          company?: string | null
+          created_at?: string
+          deadline?: string | null
+          email: string
+          full_name: string
+          how_did_you_find?: string | null
+          id?: string
+          origem?: string | null
+          position?: string | null
+          project_description?: string | null
+          project_type?: string | null
+          whatsapp: string
+        }
+        Update: {
+          budget?: string | null
+          company?: string | null
+          created_at?: string
+          deadline?: string | null
+          email?: string
+          full_name?: string
+          how_did_you_find?: string | null
+          id?: string
+          origem?: string | null
+          position?: string | null
+          project_description?: string | null
+          project_type?: string | null
+          whatsapp?: string
+        }
+        Relationships: []
+      }
       talent_applications: {
         Row: {
           additional_info: string | null

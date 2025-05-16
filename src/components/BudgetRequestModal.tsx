@@ -45,6 +45,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
 const formSchema = z.object({
   fullName: z.string().min(3, { message: "Nome é obrigatório" }),
@@ -135,11 +136,29 @@ const BudgetRequestModal = ({
     setIsSubmitting(true);
     
     try {
-      // Here you would normally send the form data to your backend
-      console.log("Form submitted:", data);
+      // Preparar os dados para o Supabase
+      const budgetRequestData = {
+        full_name: data.fullName,
+        email: data.email,
+        whatsapp: data.whatsapp,
+        project_stage: data.projectStage,
+        solution_types: data.solutionTypes,
+        business_segment: data.businessSegment,
+        project_goal: data.projectGoal,
+        deadline: data.deadline,
+        budget: data.budget,
+        schedule_call: data.scheduleCall
+      };
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Inserir os dados na tabela budget_requests
+      const { error } = await supabase
+        .from('budget_requests')
+        .insert(budgetRequestData);
+        
+      if (error) {
+        console.error("Erro ao salvar solicitação:", error);
+        throw error;
+      }
       
       toast({
         title: "Solicitação enviada!",
@@ -150,6 +169,7 @@ const BudgetRequestModal = ({
       form.reset();
       setCurrentStep(0);
     } catch (error) {
+      console.error("Erro ao enviar formulário:", error);
       toast({
         title: "Erro ao enviar",
         description: "Ocorreu um erro. Tente novamente mais tarde.",
