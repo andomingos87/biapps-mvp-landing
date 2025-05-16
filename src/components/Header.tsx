@@ -3,10 +3,12 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import BudgetRequestModal from "./BudgetRequestModal";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -61,6 +63,13 @@ const Header = () => {
     }
   };
 
+  const openModal = () => {
+    setIsModalOpen(true);
+    if (isMenuOpen) {
+      setIsMenuOpen(false);
+    }
+  };
+
   return <header className={`sticky top-0 z-50 w-full transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-sm shadow-md' : 'bg-white'}`}>
       <div className="container-custom flex justify-between items-center h-20">
         <div className="flex items-center">
@@ -84,7 +93,12 @@ const Header = () => {
           <a href="#differentials" onClick={(e) => smoothScroll(e, 'differentials')} className="text-gray-700 hover:text-primary font-medium transition-colors relative nav-link">Diferenciais</a>
           <a href="#cases" onClick={(e) => smoothScroll(e, 'cases')} className="text-gray-700 hover:text-primary font-medium transition-colors relative nav-link">Casos</a>
           <a href="#faq" onClick={(e) => smoothScroll(e, 'faq')} className="text-gray-700 hover:text-primary font-medium transition-colors relative nav-link">FAQ</a>
-          <Button className="bg-primary hover:bg-primary/90 text-white shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all">Começar agora</Button>
+          <Button 
+            className="bg-primary hover:bg-primary/90 text-white shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all"
+            onClick={openModal}
+          >
+            Começar agora
+          </Button>
         </nav>
 
         {/* Mobile Menu */}
@@ -105,12 +119,20 @@ const Header = () => {
               <a href="#faq" onClick={(e) => smoothScroll(e, 'faq')} className="p-2 text-lg text-gray-700 hover:text-primary font-medium transition-colors border-b border-gray-100 pb-4">
                 FAQ
               </a>
-              <Button className="bg-primary hover:bg-primary/90 text-white w-full py-6 shadow-md shadow-primary/20" onClick={() => setIsMenuOpen(false)}>
+              <Button 
+                className="bg-primary hover:bg-primary/90 text-white w-full py-6 shadow-md shadow-primary/20" 
+                onClick={openModal}
+              >
                 Contato
               </Button>
             </div>
           </div>}
       </div>
+
+      <BudgetRequestModal 
+        open={isModalOpen} 
+        onOpenChange={setIsModalOpen}
+      />
     </header>;
 };
 

@@ -1,6 +1,18 @@
+
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap } from "lucide-react";
+import BudgetRequestModal from "./BudgetRequestModal";
+
 const Hero = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState<string | undefined>(undefined);
+  
+  const openModal = (serviceType?: string) => {
+    setSelectedService(serviceType);
+    setIsModalOpen(true);
+  };
+
   return <section className="bg-gradient-to-b from-white to-gray-50 py-24 md:py-32">
       <div className="container-custom grid md:grid-cols-2 gap-12 items-center">
         <div className="order-2 md:order-1 animate-fade-in">
@@ -14,11 +26,18 @@ const Hero = () => {
             Especialistas em desenvolvimento web, mobile, agentes de IA e automações para acelerar o crescimento do seu negócio.
           </p>
           <div className="flex flex-wrap gap-4">
-            <Button className="bg-primary hover:bg-primary/90 text-white px-6 py-6 text-lg shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all">
+            <Button 
+              className="bg-primary hover:bg-primary/90 text-white px-6 py-6 text-lg shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all"
+              onClick={() => openModal("mvp")}
+            >
               Iniciar projeto
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button variant="outline" className="border-2 border-secondary text-secondary hover:bg-secondary/10 px-6 py-6 text-lg transition-colors">
+            <Button 
+              variant="outline" 
+              className="border-2 border-secondary text-secondary hover:bg-secondary/10 px-6 py-6 text-lg transition-colors"
+              onClick={() => openModal()}
+            >
               Agendar conversa
             </Button>
           </div>
@@ -57,6 +76,12 @@ const Hero = () => {
             </div>)}
         </div>
       </div>
+
+      <BudgetRequestModal 
+        open={isModalOpen} 
+        onOpenChange={setIsModalOpen}
+        service={selectedService}
+      />
     </section>;
 };
 export default Hero;

@@ -1,9 +1,21 @@
+
+import { useState } from "react";
 import { Code, Smartphone, Zap, Clock, Check } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import BudgetRequestModal from "./BudgetRequestModal";
+
 const Services = () => {
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState<string | undefined>(undefined);
+  
+  const openModal = (serviceType: string) => {
+    setSelectedService(serviceType);
+    setIsModalOpen(true);
+  };
+
   const services = [{
     title: "MVP Web",
     icon: <Code className="h-8 w-8 text-primary" />,
@@ -13,6 +25,7 @@ const Services = () => {
     price: "A partir de R$17.900",
     iconColor: "text-primary",
     path: "/web-development",
+    serviceType: "mvp",
     ctaText: "Solicitar orçamento"
   }, {
     title: "MVP Mobile",
@@ -23,6 +36,7 @@ const Services = () => {
     price: "A partir de R$19.900",
     iconColor: "text-primary",
     path: "/mobile-development",
+    serviceType: "mobile",
     ctaText: "Solicitar orçamento"
   }, {
     title: "MVP Agente de IA",
@@ -33,8 +47,10 @@ const Services = () => {
     price: "A partir de R$19.900",
     iconColor: "text-primary",
     path: "/ai-agents",
+    serviceType: "ai",
     ctaText: "Solicitar orçamento"
   }];
+  
   return <section id="services" className="section bg-white py-20">
       <div className="container-custom">
         <div className="text-center mb-16">
@@ -75,9 +91,10 @@ const Services = () => {
                 </div>
                 
                 <div className="mt-auto space-y-4">
-                  
-                  
-                  <Button className="w-full text-base font-semibold py-6" onClick={() => navigate(service.path)}>
+                  <Button 
+                    className="w-full text-base font-semibold py-6" 
+                    onClick={() => openModal(service.serviceType)}
+                  >
                     {service.ctaText}
                   </Button>
                 </div>
@@ -85,6 +102,12 @@ const Services = () => {
             </Card>)}
         </div>
       </div>
+
+      <BudgetRequestModal 
+        open={isModalOpen} 
+        onOpenChange={setIsModalOpen}
+        service={selectedService}
+      />
     </section>;
 };
 export default Services;
