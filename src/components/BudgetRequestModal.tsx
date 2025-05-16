@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,96 +10,22 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { 
-  FileText, 
-  Mail, 
-  Phone, 
-  List, 
-  Calendar, 
-  Send,
-  ArrowRight,
-  ArrowLeft,
-  User,
-  Briefcase,
-  CheckCircle,
-  CircleDot
-} from "lucide-react";
+import { Form } from "@/components/ui/form";
+import { ArrowRight, ArrowLeft, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
-import { supabase } from "@/integrations/supabase/client";
-
-const formSchema = z.object({
-  fullName: z.string().min(3, { message: "Nome é obrigatório" }),
-  email: z.string().email({ message: "E-mail inválido" }),
-  whatsapp: z.string().min(10, { message: "WhatsApp inválido" }),
-  projectStage: z.string({
-    required_error: "Por favor selecione uma opção",
-  }),
-  solutionTypes: z
-    .array(z.string())
-    .min(1, { message: "Selecione pelo menos uma opção" }),
-  businessSegment: z.string().min(1, { message: "Campo obrigatório" }),
-  projectGoal: z.string().min(1, { message: "Campo obrigatório" }),
-  deadline: z.string({
-    required_error: "Por favor selecione uma opção",
-  }),
-  budget: z.string({
-    required_error: "Por favor selecione uma opção",
-  }),
-  budgetAmount: z.string().optional(),
-  scheduleCall: z.string({
-    required_error: "Por favor selecione uma opção",
-  }),
-});
-
-type FormData = z.infer<typeof formSchema>;
+import { formSchema, FormData } from "./budget-request/schema";
+import { submitBudgetRequest } from "./budget-request/api";
+import StepIndicator from "./budget-request/StepIndicator";
+import PersonalInfoStep from "./budget-request/steps/PersonalInfoStep";
+import ProjectDetailsStep from "./budget-request/steps/ProjectDetailsStep";
+import ExpectationsStep from "./budget-request/steps/ExpectationsStep";
+import FinalStep from "./budget-request/steps/FinalStep";
 
 interface BudgetRequestModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   service?: string;
 }
-
-const formSteps = [
-  {
-    title: "Dados pessoais",
-    description: "Conte-nos quem você é",
-    icon: <User className="w-6 h-6" />,
-  },
-  {
-    title: "Sobre o projeto",
-    description: "Detalhes iniciais do seu projeto",
-    icon: <Briefcase className="w-6 h-6" />,
-  },
-  {
-    title: "Expectativas",
-    description: "Prazos e orçamento",
-    icon: <Calendar className="w-6 h-6" />,
-  },
-  {
-    title: "Finalizar",
-    description: "Último passo",
-    icon: <CheckCircle className="w-6 h-6" />,
-  },
-];
 
 const BudgetRequestModal = ({
   open,
@@ -110,7 +35,6 @@ const BudgetRequestModal = ({
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const [showBudgetInput, setShowBudgetInput] = useState(false);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -130,17 +54,9 @@ const BudgetRequestModal = ({
     mode: "onChange",
   });
 
-  // Função para monitorar alterações no campo de orçamento
-  const watchBudget = form.watch("budget");
-  
-  // Atualiza o estado de exibição do campo de valor do orçamento quando o tipo de orçamento muda
-  useEffect(() => {
-    setShowBudgetInput(watchBudget === "yes" || watchBudget === "estimate");
-  }, [watchBudget]);
-
-  // Função modificada para lidar com o avanço dos passos
+  // Function to handle form submission and step navigation
   const onSubmit = async (data: FormData) => {
-    if (currentStep < formSteps.length - 1) {
+    if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
       return;
     }
@@ -148,30 +64,7 @@ const BudgetRequestModal = ({
     setIsSubmitting(true);
     
     try {
-      // Preparar os dados para o Supabase
-      const budgetRequestData = {
-        full_name: data.fullName,
-        email: data.email,
-        whatsapp: data.whatsapp,
-        project_stage: data.projectStage,
-        solution_types: data.solutionTypes,
-        business_segment: data.businessSegment,
-        project_goal: data.projectGoal,
-        deadline: data.deadline,
-        budget: data.budget,
-        budget_amount: data.budgetAmount,
-        schedule_call: data.scheduleCall
-      };
-      
-      // Inserir os dados na tabela budget_requests
-      const { error } = await supabase
-        .from('budget_requests')
-        .insert(budgetRequestData);
-        
-      if (error) {
-        console.error("Erro ao salvar solicitação:", error);
-        throw error;
-      }
+      await submitBudgetRequest(data);
       
       toast({
         title: "Solicitação enviada!",
@@ -193,390 +86,40 @@ const BudgetRequestModal = ({
     }
   };
 
+  // Handle navigation between form steps
   const handleBackStep = () => {
     setCurrentStep(Math.max(0, currentStep - 1));
   };
 
   const handleNextStep = () => {
-    // Para o avanço manual entre passos (quando clica no botão "Próximo")
-    if (currentStep < formSteps.length - 1) {
+    if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
     }
   };
 
-  // Função simplificada para verificar se o passo atual está completo
+  // Check if current step is complete to enable next button
   const isStepComplete = () => {
-    // Se estiver no último passo, verificamos se o scheduleCall está preenchido
+    // For the last step, verify that scheduleCall is filled
     if (currentStep === 3) {
       const { scheduleCall } = form.getValues();
       return !!scheduleCall;
     }
     
-    // Para os outros passos, vamos permitir o avanço sem validação rigorosa
+    // For other steps, allow proceeding (validation happens on submit)
     return true;
   };
 
-  const solutionOptions = [
-    { id: "mvp", label: "Desenvolvimento de MVP" },
-    { id: "website", label: "Site institucional" },
-    { id: "system", label: "Sistema interno personalizado" },
-    { id: "mobile", label: "Aplicação mobile" },
-    { id: "integration", label: "Integrações e automações" },
-    { id: "ai", label: "IA aplicada ao negócio" },
-  ];
-
-  const stageOptions = [
-    { id: "idea", label: "Apenas uma ideia" },
-    { id: "prototype", label: "Já tenho um protótipo" },
-    { id: "working", label: "Já tenho um sistema funcionando" },
-    { id: "redesign", label: "Estou reformulando um produto existente" }
-  ];
-
-  const deadlineOptions = [
-    { id: "30days", label: "Sim, dentro de 30 dias" },
-    { id: "60days", label: "Sim, dentro de 2 meses" },
-    { id: "no-urgency", label: "Sem urgência" },
-    { id: "evaluating", label: "Ainda estou avaliando" }
-  ];
-
-  const budgetOptions = [
-    { id: "yes", label: "Sim" },
-    { id: "estimate", label: "Tenho uma estimativa" },
-    { id: "no", label: "Ainda não" }
-  ];
-
-  const callOptions = [
-    { id: "yes", label: "Sim, quero conversar com um especialista" },
-    { id: "no", label: "Não por agora, só estou pesquisando" }
-  ];
-
+  // Render the appropriate step content based on currentStep
   const renderStepContent = () => {
     switch (currentStep) {
       case 0:
-        return (
-          <div className="space-y-6">
-            <div className="grid gap-6">
-              <FormField
-                control={form.control}
-                name="fullName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-base">
-                      <User size={18} className="text-primary" />
-                      Seu nome completo
-                    </FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="Digite seu nome" 
-                        className="h-12 text-base" 
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-base">
-                      <Mail size={18} className="text-primary" />
-                      E-mail profissional
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="seu@email.com"
-                        className="h-12 text-base"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="whatsapp"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-base">
-                      <Phone size={18} className="text-primary" />
-                      WhatsApp (com DDD)
-                    </FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="(00) 00000-0000" 
-                        className="h-12 text-base" 
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </div>
-        );
+        return <PersonalInfoStep form={form} />;
       case 1:
-        return (
-          <div className="space-y-6">
-            <FormField
-              control={form.control}
-              name="projectStage"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2 text-base">
-                    <List size={18} className="text-primary" />
-                    Estágio atual do projeto
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="h-12 text-base">
-                        <SelectValue placeholder="Selecione uma opção" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {stageOptions.map(option => (
-                        <SelectItem key={option.id} value={option.id}>{option.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="solutionTypes"
-              render={() => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2 text-base">
-                    <List size={18} className="text-primary" />
-                    Qual tipo de solução você procura?
-                  </FormLabel>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
-                    {solutionOptions.map((option) => (
-                      <FormField
-                        key={option.id}
-                        control={form.control}
-                        name="solutionTypes"
-                        render={({ field }) => {
-                          return (
-                            <FormItem
-                              key={option.id}
-                              className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"
-                            >
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value?.includes(option.id)}
-                                  onCheckedChange={(checked) => {
-                                    return checked
-                                      ? field.onChange([
-                                          ...(field.value || []),
-                                          option.id,
-                                        ])
-                                      : field.onChange(
-                                          field.value?.filter(
-                                            (value) => value !== option.id
-                                          )
-                                        );
-                                  }}
-                                />
-                              </FormControl>
-                              <FormLabel className="font-normal cursor-pointer text-base">
-                                {option.label}
-                              </FormLabel>
-                            </FormItem>
-                          );
-                        }}
-                      />
-                    ))}
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="businessSegment"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2 text-base">
-                    <Briefcase size={18} className="text-primary" />
-                    Seu segmento ou tipo de negócio
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Ex: Saúde, Educação, Varejo..."
-                      className="h-12 text-base"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-        );
+        return <ProjectDetailsStep form={form} />;
       case 2:
-        return (
-          <div className="space-y-6">
-            <FormField
-              control={form.control}
-              name="projectGoal"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2 text-base">
-                    <FileText size={18} className="text-primary" />
-                    Qual é o seu objetivo com esse projeto?
-                  </FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Ex: Vender mais, automatizar processos, validar ideia, etc."
-                      className="resize-none min-h-[120px] text-base"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="deadline"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2 text-base">
-                    <Calendar size={18} className="text-primary" />
-                    Tem prazo definido para lançar?
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="h-12 text-base">
-                        <SelectValue placeholder="Selecione uma opção" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {deadlineOptions.map(option => (
-                        <SelectItem key={option.id} value={option.id}>{option.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="budget"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2 text-base">
-                    <List size={18} className="text-primary" />
-                    Já tem um orçamento definido para esse projeto?
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="h-12 text-base">
-                        <SelectValue placeholder="Selecione uma opção" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {budgetOptions.map(option => (
-                        <SelectItem key={option.id} value={option.id}>{option.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {showBudgetInput && (
-              <FormField
-                control={form.control}
-                name="budgetAmount"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="flex items-center gap-2 text-base">
-                      <List size={18} className="text-primary" />
-                      Qual o valor do seu orçamento?
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Ex: R$ 10.000,00"
-                        className="h-12 text-base"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
-          </div>
-        );
+        return <ExpectationsStep form={form} />;
       case 3:
-        return (
-          <div className="space-y-6">
-            <FormField
-              control={form.control}
-              name="scheduleCall"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="flex items-center gap-2 text-base">
-                    <Phone size={18} className="text-primary" />
-                    Deseja agendar uma conversa?
-                  </FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="h-12 text-base">
-                        <SelectValue placeholder="Selecione uma opção" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {callOptions.map(option => (
-                        <SelectItem key={option.id} value={option.id}>{option.label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            <div className="rounded-lg bg-primary/5 p-4 border border-primary/10">
-              <h4 className="font-medium flex items-center gap-2 mb-2">
-                <CheckCircle size={16} className="text-primary" /> 
-                Quase lá!
-              </h4>
-              <p className="text-sm text-gray-600">
-                Ao enviar este formulário, nossa equipe analisará seu projeto e entrará em contato com você o mais breve possível para discutir os próximos passos.
-              </p>
-            </div>
-          </div>
-        );
+        return <FinalStep form={form} />;
       default:
         return null;
     }
@@ -602,40 +145,7 @@ const BudgetRequestModal = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="relative mt-4 mb-6">
-          <div className="absolute top-1/2 h-0.5 w-full bg-gray-200 -translate-y-1/2"></div>
-          <div className="absolute top-1/2 h-0.5 bg-primary -translate-y-1/2 transition-all duration-300" 
-               style={{ width: `${(currentStep / (formSteps.length - 1)) * 100}%` }}></div>
-          
-          <div className="relative flex justify-between">
-            {formSteps.map((step, index) => (
-              <div 
-                key={index} 
-                className="flex flex-col items-center"
-              >
-                <div 
-                  className={cn(
-                    "relative z-10 flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-300",
-                    index <= currentStep 
-                      ? "border-primary bg-primary text-white" 
-                      : "border-gray-300 bg-white text-gray-400"
-                  )}
-                >
-                  {index < currentStep ? (
-                    <CheckCircle className="w-5 h-5" />
-                  ) : (
-                    <CircleDot className="w-5 h-5" />
-                  )}
-                </div>
-                <div className="mt-2 text-xs font-medium text-center hidden sm:block">
-                  <p className={cn(index <= currentStep ? "text-primary" : "text-gray-500")}>
-                    {step.title}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <StepIndicator currentStep={currentStep} />
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -662,9 +172,9 @@ const BudgetRequestModal = ({
                 type="button"
                 className="px-6 py-6 text-base"
                 disabled={isSubmitting || !isStepComplete()}
-                onClick={currentStep < formSteps.length - 1 ? handleNextStep : form.handleSubmit(onSubmit)}
+                onClick={currentStep < 3 ? handleNextStep : form.handleSubmit(onSubmit)}
               >
-                {currentStep < formSteps.length - 1 ? (
+                {currentStep < 3 ? (
                   <>
                     Próximo
                     <ArrowRight className="ml-2 h-4 w-4" />
