@@ -65,6 +65,7 @@ const formSchema = z.object({
   budget: z.string({
     required_error: "Por favor selecione uma opção",
   }),
+  budgetAmount: z.string().optional(),
   scheduleCall: z.string({
     required_error: "Por favor selecione uma opção",
   }),
@@ -109,6 +110,7 @@ const BudgetRequestModal = ({
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const [showBudgetInput, setShowBudgetInput] = useState(false);
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -122,10 +124,19 @@ const BudgetRequestModal = ({
       projectGoal: "",
       deadline: "",
       budget: "",
+      budgetAmount: "",
       scheduleCall: "",
     },
     mode: "onChange",
   });
+
+  // Função para monitorar alterações no campo de orçamento
+  const watchBudget = form.watch("budget");
+  
+  // Atualiza o estado de exibição do campo de valor do orçamento quando o tipo de orçamento muda
+  React.useEffect(() => {
+    setShowBudgetInput(watchBudget === "yes" || watchBudget === "estimate");
+  }, [watchBudget]);
 
   // Função modificada para lidar com o avanço dos passos
   const onSubmit = async (data: FormData) => {
@@ -148,6 +159,7 @@ const BudgetRequestModal = ({
         project_goal: data.projectGoal,
         deadline: data.deadline,
         budget: data.budget,
+        budget_amount: data.budgetAmount,
         schedule_call: data.scheduleCall
       };
       
@@ -497,6 +509,29 @@ const BudgetRequestModal = ({
                 </FormItem>
               )}
             />
+
+            {showBudgetInput && (
+              <FormField
+                control={form.control}
+                name="budgetAmount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2 text-base">
+                      <List size={18} className="text-primary" />
+                      Qual o valor do seu orçamento?
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Ex: R$ 10.000,00"
+                        className="h-12 text-base"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
           </div>
         );
       case 3:
