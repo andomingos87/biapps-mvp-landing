@@ -79,7 +79,7 @@ const Services = () => {
           {services.map((service, index) => (
             <Card 
               key={index} 
-              className={`border-none shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br ${service.gradient} overflow-hidden group cursor-pointer h-full`}
+              className={`border-none shadow-xl hover:shadow-2xl transition-all duration-300 bg-gradient-to-br ${service.gradient} overflow-hidden group cursor-pointer h-full flex flex-col`}
             >
               <CardHeader className="pb-2">
                 <div className={`${service.iconBg} rounded-full w-16 h-16 flex items-center justify-center mb-4 transform group-hover:scale-110 transition-transform`}>
@@ -92,10 +92,10 @@ const Services = () => {
                 </div>
               </CardHeader>
               
-              <CardContent className="pt-3 flex flex-col h-full">
+              <CardContent className="pt-3 flex flex-col flex-grow">
                 <p className="text-gray-700 mb-4">{service.description}</p>
                 
-                <div className="mb-6">
+                <div className="mb-6 flex-grow">
                   <h4 className="font-semibold text-lg mb-3 text-secondary">Benefícios</h4>
                   <ul className="space-y-2">
                     {service.benefits.map((benefit, idx) => (
