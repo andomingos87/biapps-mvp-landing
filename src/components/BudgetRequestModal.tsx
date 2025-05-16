@@ -127,6 +127,7 @@ const BudgetRequestModal = ({
     mode: "onChange",
   });
 
+  // Função modificada para lidar com o avanço dos passos
   const onSubmit = async (data: FormData) => {
     if (currentStep < formSteps.length - 1) {
       setCurrentStep(currentStep + 1);
@@ -184,22 +185,22 @@ const BudgetRequestModal = ({
     setCurrentStep(Math.max(0, currentStep - 1));
   };
 
-  const isStepComplete = () => {
-    if (currentStep === 0) {
-      const { fullName, email, whatsapp } = form.getValues();
-      return fullName.length >= 3 && z.string().email().safeParse(email).success && whatsapp.length >= 10;
+  const handleNextStep = () => {
+    // Para o avanço manual entre passos (quando clica no botão "Próximo")
+    if (currentStep < formSteps.length - 1) {
+      setCurrentStep(currentStep + 1);
     }
-    
-    if (currentStep === 1) {
-      const { projectStage, solutionTypes, businessSegment } = form.getValues();
-      return !!projectStage && solutionTypes.length >= 1 && businessSegment.length >= 1;
-    }
-    
-    if (currentStep === 2) {
-      const { projectGoal, deadline, budget } = form.getValues();
-      return projectGoal.length >= 1 && !!deadline && !!budget;
-    }
+  };
 
+  // Função simplificada para verificar se o passo atual está completo
+  const isStepComplete = () => {
+    // Se estiver no último passo, verificamos se o scheduleCall está preenchido
+    if (currentStep === 3) {
+      const { scheduleCall } = form.getValues();
+      return !!scheduleCall;
+    }
+    
+    // Para os outros passos, vamos permitir o avanço sem validação rigorosa
     return true;
   };
 
@@ -623,9 +624,10 @@ const BudgetRequestModal = ({
               )}
               
               <Button
-                type="submit"
+                type="button"
                 className="px-6 py-6 text-base"
                 disabled={isSubmitting || !isStepComplete()}
+                onClick={currentStep < formSteps.length - 1 ? handleNextStep : form.handleSubmit(onSubmit)}
               >
                 {currentStep < formSteps.length - 1 ? (
                   <>
