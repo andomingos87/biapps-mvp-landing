@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
@@ -65,6 +64,13 @@ const Header = () => {
     }
   };
 
+  const openBudgetModal = () => {
+    setIsBudgetModalOpen(true);
+    if (isMenuOpen) {
+      setIsMenuOpen(false);
+    }
+  };
+
   const openCalendlyModal = () => {
     setIsCalendlyModalOpen(true);
     if (isMenuOpen) {
@@ -97,7 +103,7 @@ const Header = () => {
           <a href="#faq" onClick={(e) => smoothScroll(e, 'faq')} className="text-gray-700 hover:text-primary font-medium transition-colors relative nav-link">FAQ</a>
           <Button 
             className="bg-primary hover:bg-primary/90 text-white shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all"
-            onClick={openCalendlyModal}
+            onClick={openBudgetModal}
           >
             Começar agora
           </Button>
@@ -123,7 +129,7 @@ const Header = () => {
               </a>
               <Button 
                 className="bg-primary hover:bg-primary/90 text-white w-full py-6 shadow-md shadow-primary/20" 
-                onClick={openCalendlyModal}
+                onClick={openBudgetModal}
               >
                 Contato
               </Button>
@@ -131,6 +137,11 @@ const Header = () => {
           </div>}
       </div>
 
+      <BudgetRequestModal 
+        open={isBudgetModalOpen} 
+        onOpenChange={setIsBudgetModalOpen}
+      />
+      
       <CalendlyModal 
         open={isCalendlyModalOpen} 
         onOpenChange={setIsCalendlyModalOpen}
