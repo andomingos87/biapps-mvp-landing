@@ -2,9 +2,8 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, PlusCircle } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
 
 interface CaseStudy {
   id: string;
@@ -19,7 +18,6 @@ interface CaseStudy {
 const CaseStudies = () => {
   const [cases, setCases] = useState<CaseStudy[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCases = async () => {
@@ -40,17 +38,6 @@ const CaseStudies = () => {
 
     fetchCases();
   }, []);
-
-  // Verificar se o usuário está autenticado
-  const handleAdminClick = async () => {
-    const { data } = await supabase.auth.getSession();
-    if (data.session) {
-      navigate("/admin/cases");
-    } else {
-      // Se não estiver autenticado, mostrar diálogo de login aqui ou redirecionar
-      alert("Você precisa estar autenticado para acessar o painel admin");
-    }
-  };
 
   return (
     <section id="cases" className="section bg-gradient-to-b from-gray-50 to-white py-24">
@@ -108,18 +95,9 @@ const CaseStudies = () => {
           </div>
         )}
 
-        <div className="mt-12 flex justify-center space-x-4">
+        <div className="mt-12 flex justify-center">
           <Button variant="outline" className="border-2 border-secondary text-secondary hover:bg-secondary/10 px-6 py-2 text-lg transition-colors">
             Ver mais casos
-          </Button>
-          
-          <Button 
-            variant="outline" 
-            className="border-2 border-primary text-primary hover:bg-primary/10 px-6 py-2 text-lg transition-colors flex items-center"
-            onClick={handleAdminClick}
-          >
-            <PlusCircle className="mr-2 h-5 w-5" />
-            Admin
           </Button>
         </div>
       </div>

@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PlusCircle, Edit, Trash2 } from "lucide-react";
+import { PlusCircle, Edit, Trash2, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,20 +34,34 @@ const AdminCaseStudies = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentCase, setCurrentCase] = useState<CaseStudy | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
   
   useEffect(() => {
-    // Verificar autenticação
+    // Verificar autenticação e redirecionar se não autenticado
     const checkAuth = async () => {
       const { data } = await supabase.auth.getSession();
+      
       if (!data.session) {
         toast.error("Você precisa estar autenticado para acessar esta página");
-        navigate("/");
+        navigate("/auth");
+        return;
       }
+      
+      setIsAuthenticated(true);
+      fetchCases();
     };
     
     checkAuth();
-    fetchCases();
+    
+    // Monitorar mudanças na autenticação
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') {
+        navigate("/auth");
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, [navigate]);
 
   const fetchCases = async () => {
@@ -93,6 +107,17 @@ const AdminCaseStudies = () => {
     }
   };
 
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    
+    if (error) {
+      toast.error("Erro ao fazer logout");
+    } else {
+      toast.success("Logout realizado com sucesso");
+      navigate("/");
+    }
+  };
+
   const handleDialogClose = (refetch?: boolean) => {
     setIsDialogOpen(false);
     if (refetch) {
@@ -100,16 +125,34 @@ const AdminCaseStudies = () => {
     }
   };
 
+  // Mostrar página de carregamento enquanto verifica autenticação
+  if (!isAuthenticated && isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent align-[-0.125em]"></div>
+          <p className="mt-4">Verificando autenticação...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Header />
       <main className="flex-grow container-custom py-12">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Gerenciamento de Casos de Sucesso</h1>
-          <Button onClick={handleCreate} className="bg-primary hover:bg-primary/90">
-            <PlusCircle className="w-4 h-4 mr-2" />
-            Novo Caso
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={handleCreate} className="bg-primary hover:bg-primary/90">
+              <PlusCircle className="w-4 h-4 mr-2" />
+              Novo Caso
+            </Button>
+            <Button onClick={handleLogout} variant="outline" className="border-red-500 text-red-500 hover:bg-red-50">
+              <LogOut className="w-4 h-4 mr-2" />
+              Sair
+            </Button>
+          </div>
         </div>
 
         {isLoading ? (

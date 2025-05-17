@@ -1,7 +1,10 @@
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Phone, Mail, MapPin } from "lucide-react";
+import { Link } from "react-router-dom";
+
 const Footer = () => {
   return <footer className="bg-gray-50 pt-16 pb-8">
       <div className="container-custom">
@@ -77,6 +80,7 @@ const Footer = () => {
           <div className="flex space-x-4 mt-4 md:mt-0">
             <a href="#" className="text-gray-500 text-sm hover:text-primary transition-colors">Termos de Uso</a>
             <a href="#" className="text-gray-500 text-sm hover:text-primary transition-colors">Política de Privacidade</a>
+            <Link to="/auth" className="text-gray-500 text-sm hover:text-primary transition-colors">Admin</Link>
           </div>
         </div>
       </div>

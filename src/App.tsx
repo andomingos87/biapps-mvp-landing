@@ -11,6 +11,7 @@ import MobileDevelopment from "./pages/MobileDevelopment";
 import AIAgents from "./pages/AIAgents";
 import Automation from "./pages/Automation";
 import AdminCaseStudies from "./pages/AdminCaseStudies";
+import Auth from "./pages/Auth";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/mobile-development" element={<MobileDevelopment />} />
           <Route path="/ai-agents" element={<AIAgents />} />
           <Route path="/automation" element={<Automation />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/admin/cases" element={<AdminCaseStudies />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
