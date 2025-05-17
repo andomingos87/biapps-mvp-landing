@@ -67,12 +67,15 @@ const BudgetRequestModal = ({
   // Function to handle form submission and step navigation
   const onSubmit = async (data: FormData) => {
     if (currentStep < 3) {
-      // Trigger validation for the current step fields
-      form.trigger();
-      
-      // Only proceed if the current step is valid
-      if (isCurrentStepValid()) {
-        nextStep();
+      // Move to the next step if validation is successful
+      const success = await nextStep();
+      if (!success) {
+        // If validation failed, show a toast
+        toast({
+          title: "Validação falhou",
+          description: "Por favor, preencha todos os campos obrigatórios.",
+          variant: "destructive",
+        });
       }
       return;
     }
@@ -80,6 +83,9 @@ const BudgetRequestModal = ({
     setIsSubmitting(true);
     
     try {
+      // Log the data being submitted for debugging
+      console.log("Submitting form data:", data);
+      
       await submitBudgetRequest(data);
       
       toast({

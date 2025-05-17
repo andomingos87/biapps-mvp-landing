@@ -1,5 +1,5 @@
 
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,6 +19,13 @@ const ExpectationsStep: React.FC<ExpectationsStepProps> = ({ form }) => {
   const showBudgetInput = useMemo(() => {
     return budgetType === "yes" || budgetType === "estimate";
   }, [budgetType]);
+  
+  // Clear budget amount when not showing the field
+  useEffect(() => {
+    if (!showBudgetInput && form.getValues("budgetAmount")) {
+      form.setValue("budgetAmount", "");
+    }
+  }, [showBudgetInput, form]);
 
   return (
     <div className="space-y-6">
@@ -55,6 +62,7 @@ const ExpectationsStep: React.FC<ExpectationsStepProps> = ({ form }) => {
             <Select
               onValueChange={field.onChange}
               defaultValue={field.value}
+              value={field.value}
             >
               <FormControl>
                 <SelectTrigger className="h-12 text-base">
@@ -84,6 +92,7 @@ const ExpectationsStep: React.FC<ExpectationsStepProps> = ({ form }) => {
             <Select
               onValueChange={field.onChange}
               defaultValue={field.value}
+              value={field.value}
             >
               <FormControl>
                 <SelectTrigger className="h-12 text-base">

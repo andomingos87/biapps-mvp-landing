@@ -12,6 +12,7 @@ export type Database = {
       budget_requests: {
         Row: {
           budget: string
+          budget_amount: string | null
           business_segment: string
           created_at: string
           deadline: string
@@ -26,6 +27,7 @@ export type Database = {
         }
         Insert: {
           budget: string
+          budget_amount?: string | null
           business_segment: string
           created_at?: string
           deadline: string
@@ -40,6 +42,7 @@ export type Database = {
         }
         Update: {
           budget?: string
+          budget_amount?: string | null
           business_segment?: string
           created_at?: string
           deadline?: string

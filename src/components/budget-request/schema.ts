@@ -1,3 +1,4 @@
+
 import { z } from "zod";
 
 // Form validation schema with enhanced validation
@@ -11,7 +12,12 @@ export const formSchema = z.object({
     .string()
     .min(10, { message: "WhatsApp inválido" })
     .refine(
-      (val) => /^(?:\+55|55)?(?:\s|\()?(\d{2})(?:\s|\))?(?:\s|\-)?(9?\d{4})(?:\s|\-)?(\d{4})$/.test(val),
+      (val) => {
+        // More flexible validation that accepts common Brazilian phone formats
+        // Removes all non-digit characters for validation
+        const digits = val.replace(/\D/g, '');
+        return digits.length >= 10 && digits.length <= 13; // Allow 10-13 digits (considering country code variations)
+      },
       { message: "Formato de WhatsApp inválido" }
     ),
   projectStage: z.string({
