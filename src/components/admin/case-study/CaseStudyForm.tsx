@@ -9,6 +9,7 @@ import { caseStudySchema, CaseStudyFormValues, CaseStudy } from "./schema";
 import FormTextField from "./FormTextField";
 import FormTextareaField from "./FormTextareaField";
 import FormActions from "./FormActions";
+import ImageUploadField from "./ImageUploadField";
 
 interface CaseStudyFormProps {
   caseStudy: CaseStudy | null;
@@ -134,11 +135,10 @@ const CaseStudyForm = ({ caseStudy, onClose }: CaseStudyFormProps) => {
           placeholder="Ex: +200% em vendas, -40% em custos"
         />
         
-        <FormTextField 
+        <ImageUploadField 
           control={form.control} 
           name="image_url" 
-          label="URL da Imagem" 
-          placeholder="URL da imagem"
+          label="Imagem"
         />
 
         <FormActions 
