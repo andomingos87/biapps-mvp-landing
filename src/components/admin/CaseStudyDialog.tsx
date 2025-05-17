@@ -1,59 +1,14 @@
 
-import { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-
-// Schema para validação do formulário
-const caseStudySchema = z.object({
-  title: z.string().min(1, "O título é obrigatório"),
-  category: z.string().min(1, "A categoria é obrigatória"),
-  description: z.string().min(10, "A descrição precisa ter pelo menos 10 caracteres"),
-  image_url: z.string().default("/placeholder.svg"),
-  tags: z.string().transform(value => 
-    value.split(",").map(tag => tag.trim()).filter(tag => tag !== "")
-  ),
-  results: z.string().min(1, "O resultado é obrigatório"),
-});
-
-// Define the type for the form values based on the schema, before transformation
-type FormValues = {
-  title: string;
-  category: string;
-  description: string;
-  image_url: string;
-  tags: string;
-  results: string;
-};
-
-interface CaseStudy {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  image_url: string;
-  tags: string[];
-  results: string;
-}
+import CaseStudyForm from "./case-study/CaseStudyForm";
+import { CaseStudy } from "./case-study/schema";
 
 interface CaseStudyDialogProps {
   open: boolean;
@@ -66,85 +21,7 @@ const CaseStudyDialog: React.FC<CaseStudyDialogProps> = ({
   onClose,
   caseStudy,
 }) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const isEditing = !!caseStudy;
-  
-  // Configuração do formulário com react-hook-form e zod
-  const form = useForm<FormValues>({
-    resolver: zodResolver(caseStudySchema),
-    defaultValues: {
-      title: "",
-      category: "",
-      description: "",
-      image_url: "/placeholder.svg",
-      tags: "",
-      results: "",
-    },
-  });
-
-  // Preencher o formulário quando estiver editando
-  useEffect(() => {
-    if (caseStudy) {
-      form.reset({
-        title: caseStudy.title,
-        category: caseStudy.category,
-        description: caseStudy.description,
-        image_url: caseStudy.image_url,
-        tags: caseStudy.tags.join(", "),
-        results: caseStudy.results,
-      });
-    }
-  }, [caseStudy, form]);
-
-  const handleSubmit = async (data: FormValues) => {
-    setIsSubmitting(true);
-    
-    // Get the transformed data from zod schema (including tags as string[])
-    const transformedData = caseStudySchema.parse(data);
-
-    try {
-      if (isEditing && caseStudy) {
-        // Atualizar caso existente
-        const { error } = await supabase
-          .from("case_studies")
-          .update({
-            title: transformedData.title,
-            category: transformedData.category,
-            description: transformedData.description,
-            image_url: transformedData.image_url,
-            tags: transformedData.tags, // Now this is an array from the transform function
-            results: transformedData.results,
-          })
-          .eq("id", caseStudy.id);
-
-        if (error) throw error;
-        toast.success("Caso de sucesso atualizado com sucesso!");
-      } else {
-        // Criar novo caso
-        const { error } = await supabase
-          .from("case_studies")
-          .insert([{
-            title: transformedData.title,
-            category: transformedData.category,
-            description: transformedData.description,
-            image_url: transformedData.image_url,
-            tags: transformedData.tags, // Now this is an array from the transform function
-            results: transformedData.results,
-          }]);
-
-        if (error) throw error;
-        toast.success("Caso de sucesso criado com sucesso!");
-      }
-
-      // Fechar o diálogo e atualizar a lista
-      onClose(true);
-    } catch (error) {
-      console.error("Erro ao salvar caso:", error);
-      toast.error("Erro ao salvar caso de sucesso");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <Dialog open={open} onOpenChange={() => onClose()}>
@@ -163,106 +40,10 @@ const CaseStudyDialog: React.FC<CaseStudyDialogProps> = ({
           </Button>
         </DialogHeader>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Título</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Digite o título do caso" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="category"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Categoria</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ex: Aplicativo Mobile, Plataforma Web" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Descrição</FormLabel>
-                  <FormControl>
-                    <textarea
-                      className="flex h-20 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                      placeholder="Descreva o caso de sucesso"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="tags"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Tags (separadas por vírgulas)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ex: React, Node.js, MongoDB" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="results"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Resultados</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ex: +200% em vendas, -40% em custos" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="image_url"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>URL da Imagem</FormLabel>
-                  <FormControl>
-                    <Input placeholder="URL da imagem" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="flex justify-end space-x-4 pt-4">
-              <Button type="button" variant="outline" onClick={() => onClose()}>
-                Cancelar
-              </Button>
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Salvando..." : isEditing ? "Atualizar" : "Criar"}
-              </Button>
-            </div>
-          </form>
-        </Form>
+        <CaseStudyForm 
+          caseStudy={caseStudy} 
+          onClose={onClose} 
+        />
       </DialogContent>
     </Dialog>
   );
