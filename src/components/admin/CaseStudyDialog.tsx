@@ -101,7 +101,7 @@ const CaseStudyDialog: React.FC<CaseStudyDialogProps> = ({
             category: data.category,
             description: data.description,
             image_url: data.image_url,
-            tags: data.tags,
+            tags: data.tags, // Now this is an array from the transform function
             results: data.results,
           })
           .eq("id", caseStudy.id);
@@ -117,7 +117,7 @@ const CaseStudyDialog: React.FC<CaseStudyDialogProps> = ({
             category: data.category,
             description: data.description,
             image_url: data.image_url,
-            tags: data.tags,
+            tags: data.tags, // Now this is an array from the transform function
             results: data.results,
           }]);
 
