@@ -35,7 +35,15 @@ const caseStudySchema = z.object({
   results: z.string().min(1, "O resultado é obrigatório"),
 });
 
-type FormValues = z.infer<typeof caseStudySchema>;
+// Define the type for the form values based on the schema, before transformation
+type FormValues = {
+  title: string;
+  category: string;
+  description: string;
+  image_url: string;
+  tags: string;
+  results: string;
+};
 
 interface CaseStudy {
   id: string;
@@ -90,6 +98,9 @@ const CaseStudyDialog: React.FC<CaseStudyDialogProps> = ({
 
   const handleSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
+    
+    // Get the transformed data from zod schema (including tags as string[])
+    const transformedData = caseStudySchema.parse(data);
 
     try {
       if (isEditing && caseStudy) {
@@ -97,12 +108,12 @@ const CaseStudyDialog: React.FC<CaseStudyDialogProps> = ({
         const { error } = await supabase
           .from("case_studies")
           .update({
-            title: data.title,
-            category: data.category,
-            description: data.description,
-            image_url: data.image_url,
-            tags: data.tags, // Now this is an array from the transform function
-            results: data.results,
+            title: transformedData.title,
+            category: transformedData.category,
+            description: transformedData.description,
+            image_url: transformedData.image_url,
+            tags: transformedData.tags, // Now this is an array from the transform function
+            results: transformedData.results,
           })
           .eq("id", caseStudy.id);
 
@@ -113,12 +124,12 @@ const CaseStudyDialog: React.FC<CaseStudyDialogProps> = ({
         const { error } = await supabase
           .from("case_studies")
           .insert([{
-            title: data.title,
-            category: data.category,
-            description: data.description,
-            image_url: data.image_url,
-            tags: data.tags, // Now this is an array from the transform function
-            results: data.results,
+            title: transformedData.title,
+            category: transformedData.category,
+            description: transformedData.description,
+            image_url: transformedData.image_url,
+            tags: transformedData.tags, // Now this is an array from the transform function
+            results: transformedData.results,
           }]);
 
         if (error) throw error;
