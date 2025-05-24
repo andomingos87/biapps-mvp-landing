@@ -1,7 +1,7 @@
-
 import React from "react";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import PhoneInputMask from "./PhoneInputMask";
 import { User, Mail, Phone, AlertCircle } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 import { FormData } from "../schema";
@@ -14,16 +14,16 @@ interface PersonalInfoStepProps {
 const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ form }) => {
   // Monitor field states to provide real-time feedback
   const emailValue = form.watch("email");
-  const whatsappValue = form.watch("whatsapp");
+  // const whatsappValue = form.watch("whatsapp"); // Comentado temporariamente
   
   // Client-side validation for immediate feedback
   const emailError = emailValue && !isValidEmail(emailValue) 
     ? "Por favor, use um email válido" 
     : "";
   
-  const phoneError = whatsappValue && !isValidPhone(whatsappValue) 
-    ? "Por favor, digite um número de WhatsApp válido com DDD" 
-    : "";
+  // const phoneError = whatsappValue && !isValidPhone(whatsappValue)  // Comentado temporariamente
+  //   ? "Por favor, digite um número de WhatsApp válido com DDD" 
+  //   : "";
 
   return (
     <div className="space-y-6">
@@ -94,17 +94,21 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ form }) => {
                 WhatsApp (com DDD)
               </FormLabel>
               <FormControl>
-                <Input 
-                  placeholder="(00) 00000-0000" 
-                  className={`h-12 text-base ${(form.formState.errors.whatsapp || phoneError) ? "border-red-500 focus-visible:ring-red-500" : ""}`}
-                  {...field} 
+                <PhoneInputMask
+                  {...field}
+                  placeholder="(00) 00000-0000"
+                  className={`h-12 text-base ${form.formState.errors.whatsapp ? "border-red-500 focus-visible:ring-red-500" : ""}`}
+                  autoComplete="tel"
                 />
               </FormControl>
+              <FormDescription className="text-xs text-gray-500">
+                Informe um número válido para contato. Ex: (11) 91234-5678
+              </FormDescription>
               <FormMessage className="flex items-center gap-1 text-destructive">
-                {(form.formState.errors.whatsapp || phoneError) && (
+                {form.formState.errors.whatsapp && (
                   <AlertCircle size={14} className="inline-block" />
                 )}
-                {form.formState.errors.whatsapp?.message || phoneError}
+                {form.formState.errors.whatsapp?.message}
               </FormMessage>
             </FormItem>
           )}

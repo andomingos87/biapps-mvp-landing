@@ -1,4 +1,3 @@
-
 import { z } from "zod";
 
 // Form validation schema with enhanced validation
@@ -10,15 +9,16 @@ export const formSchema = z.object({
     .min(5, { message: "E-mail é obrigatório" }),
   whatsapp: z
     .string()
-    .min(10, { message: "WhatsApp inválido" })
+    // .min(10, { message: "WhatsApp inválido" }) // Removido - a validação principal está no refine
     .refine(
       (val) => {
         // More flexible validation that accepts common Brazilian phone formats
         // Removes all non-digit characters for validation
+        if (!val) return false; // Se val for undefined, null ou string vazia, é inválido
         const digits = val.replace(/\D/g, '');
         return digits.length >= 10 && digits.length <= 13; // Allow 10-13 digits (considering country code variations)
       },
-      { message: "Formato de WhatsApp inválido" }
+      { message: "Formato de WhatsApp inválido. Use (XX) XXXXX-XXXX ou similar." } // Mensagem de erro melhorada
     ),
   projectStage: z.string({
     required_error: "Por favor selecione uma opção",

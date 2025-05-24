@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,8 +12,8 @@ import {
 import { Form } from "@/components/ui/form";
 import { ArrowRight, ArrowLeft, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { formSchema, FormData } from "./budget-request/schema";
-import { submitBudgetRequest } from "./budget-request/api";
+import { formSchema, FormData, formSteps } from "./budget-request/schema";
+// import { submitBudgetRequest } from "./budget-request/api"; // Removido para envio direto via fetch
 import { useFormNavigation } from "./budget-request/hooks/useFormNavigation";
 import StepIndicator from "./budget-request/StepIndicator";
 import PersonalInfoStep from "./budget-request/steps/PersonalInfoStep";
@@ -35,7 +34,9 @@ const BudgetRequestModal = ({
 }: BudgetRequestModalProps) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+  // Estado do passo movido para o componente principal
+  const [currentStep, setCurrentStep] = useState(0);
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -51,51 +52,78 @@ const BudgetRequestModal = ({
       budgetAmount: "",
       scheduleCall: "",
     },
-    mode: "onChange", // This enables real-time validation
+    mode: "onChange",
   });
-  
-  // Use our custom form navigation hook
-  const { 
-    currentStep, 
-    nextStep, 
-    prevStep, 
-    goToStep,
-    isCurrentStepValid,
-    progressPercentage 
-  } = useFormNavigation({ form });
+
+  // Funções de navegação customizadas
+  const totalSteps = 4;
+  const nextStep = async () => {
+    // Validar campos do step atual
+    const currentStepFields = formSteps[currentStep].fields;
+    console.log('Valores antes do trigger:', form.getValues());
+    const isValid = await form.trigger(currentStepFields as any);
+    console.log('Tentando avançar etapa', {
+      currentStep,
+      currentStepFields,
+      isValid,
+      errors: form.formState.errors,
+      values: form.getValues()
+    });
+    if (isValid && currentStep < totalSteps - 1) {
+      setCurrentStep(currentStep + 1);
+      return true;
+    }
+    if (!isValid) {
+      setStepError('Por favor, preencha todos os campos obrigatórios corretamente.');
+    }
+    return isValid;
+  };
+
+  const prevStep = () => {
+    if (currentStep > 0) {
+      console.log('Voltando etapa', currentStep);
+      setCurrentStep(currentStep - 1);
+    }
+  };
+  const goToStep = (step: number) => {
+    if (step >= 0 && step < totalSteps) setCurrentStep(step);
+  };
+  const isCurrentStepValid = async () => {
+    const currentStepFields = formSteps[currentStep].fields;
+    return await form.trigger(currentStepFields as any);
+  };
+
+  const progressPercentage = ((currentStep + 1) / totalSteps) * 100;
 
   // Function to handle form submission and step navigation
-  const onSubmit = async (data: FormData) => {
-    if (currentStep < 3) {
-      // Move to the next step if validation is successful
-      const success = await nextStep();
-      if (!success) {
-        // If validation failed, show a toast
-        toast({
-          title: "Validação falhou",
-          description: "Por favor, preencha todos os campos obrigatórios.",
-          variant: "destructive",
-        });
-      }
-      return;
-    }
+  const [stepError, setStepError] = useState<string | null>(null);
 
+  // Renomeado de onSubmit para handleFinalFormSubmit e simplificado para apenas a submissão final
+  const handleFinalFormSubmit = async (data: FormData) => {
+    console.log('submit chamado', data, currentStep);
+    setStepError(null);
     setIsSubmitting(true);
-    
     try {
-      // Log the data being submitted for debugging
-      console.log("Submitting form data:", data);
-      
-      await submitBudgetRequest(data);
-      
+      // Envio direto para o endpoint fornecido
+      console.log('Enviando formulário FINAL', data);
+      const response = await fetch(
+        "https://biapps-teste-n8n.t9frad.easypanel.host/webhook/orcamento-site",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
+      if (!response.ok) throw new Error("Erro no envio do formulário");
       toast({
         title: "Solicitação enviada!",
         description: "Em breve nossa equipe entrará em contato.",
       });
-      
       onOpenChange(false);
       form.reset();
-      goToStep(0);
+      setCurrentStep(0);
     } catch (error) {
       console.error("Erro ao enviar formulário:", error);
       toast({
@@ -103,6 +131,7 @@ const BudgetRequestModal = ({
         description: "Ocorreu um erro. Tente novamente mais tarde.",
         variant: "destructive",
       });
+      setStepError('Erro ao enviar formulário. Tente novamente mais tarde.');
     } finally {
       setIsSubmitting(false);
     }
@@ -135,24 +164,25 @@ const BudgetRequestModal = ({
         return null;
     }
   };
-  
+
   return (
     <Dialog open={open} onOpenChange={(openState) => {
       if (!openState) {
         setTimeout(() => {
-          goToStep(0);
+          setCurrentStep(0);
           form.reset();
         }, 300);
       }
       onOpenChange(openState);
     }}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">
-            Vamos entender o que você precisa?
+      <DialogContent className="max-w-xl w-full max-h-[90vh] overflow-y-auto bg-white border border-gray-200 rounded-2xl shadow-none p-0 md:p-0">
+        {/* Glassmorphism ainda mais leve, mais espaço em branco, borda/sombra mais suave */}
+        <DialogHeader className="px-6 pt-8 pb-2">
+          <DialogTitle className="text-xl font-semibold text-gray-900 leading-tight">
+            Solicite um orçamento
           </DialogTitle>
-          <DialogDescription className="text-base mt-2">
-            Conte um pouco sobre seu projeto. Em poucos minutos, vamos entender se somos o time certo para ajudar a tirar sua ideia do papel.
+          <DialogDescription className="text-sm mt-1 text-gray-500">
+            Conte um pouco sobre seu projeto e retornaremos rapidamente.
           </DialogDescription>
         </DialogHeader>
 
@@ -163,46 +193,51 @@ const BudgetRequestModal = ({
         />
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="min-h-[280px]">
+          {/* O onSubmit do form agora usa handleFinalFormSubmit */}
+          <form onSubmit={form.handleSubmit(handleFinalFormSubmit)} className="space-y-8 px-6 pb-8 pt-2">
+            <div className="min-h-[220px] flex flex-col justify-center bg-white rounded-lg p-0">
               {renderStepContent()}
             </div>
-            
-            <div className="flex items-center justify-between gap-4 pt-4 border-t">
+            <div className="flex flex-row items-center justify-between gap-4 pt-6 border-t border-gray-100">
               {currentStep > 0 ? (
-                <Button 
-                  type="button" 
-                  variant="outline" 
+                <Button
+                  type="button"
+                  variant="ghost"
                   onClick={handleBackStep}
-                  className="px-6 py-6 text-base"
+                  className="px-4 py-2 text-sm font-normal rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100"
                 >
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Voltar
+                  <ArrowLeft className="mr-1 h-4 w-4" /> Voltar
+                </Button>
+              ) : <span />}
+              {/* Lógica do botão Próximo/Enviar ajustada */}
+              {currentStep < totalSteps - 1 ? (
+                <Button
+                  type="button" // Para navegação, não submissão final
+                  onClick={nextStep} // Chama diretamente a função de validação da etapa e navegação
+                  className="px-6 py-2 text-sm font-medium rounded-md bg-primary text-white hover:bg-primary/90 transition"
+                  disabled={isSubmitting} // Pode ser desabilitado se algo estiver em progresso
+                >
+                  Próximo <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               ) : (
-                <div></div>
+                <Button
+                  type="submit" // Para submissão final do formulário
+                  className="px-6 py-2 text-sm font-medium rounded-md bg-primary text-white hover:bg-primary/90 transition"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <span className="flex items-center gap-2 animate-pulse">Enviando...</span>
+                  ) : (
+                    <>
+                      Enviar <Send className="ml-2 h-4 w-4" />
+                    </>
+                  )}
+                </Button>
               )}
-              
-              <Button
-                type="submit"
-                className="px-6 py-6 text-base"
-                disabled={isSubmitting}
-              >
-                {currentStep < 3 ? (
-                  <>
-                    Próximo
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </>
-                ) : isSubmitting ? (
-                  "Enviando..."
-                ) : (
-                  <>
-                    Enviar solicitação
-                    <Send className="ml-2 h-4 w-4" />
-                  </>
-                )}
-              </Button>
             </div>
+            {stepError && (
+              <div className="mt-2 text-sm text-red-600 text-center font-medium animate-pulse">{stepError}</div>
+            )}
           </form>
         </Form>
       </DialogContent>
