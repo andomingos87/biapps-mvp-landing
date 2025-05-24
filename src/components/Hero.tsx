@@ -22,18 +22,15 @@ const Hero = () => {
             Desenvolvimento de Software para Startups
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            Desenvolvemos MVPs Web em até 4 semanas <span className="whitespace-nowrap">em até <span className="text-secondary flex items-center inline-flex"><Zap className="h-8 w-8 mr-1 inline" /> 4 semanas</span></span>
+          Desenvolvimento de MVP em low-code para startups brasileiras
           </h1>
-          <p className="text-gray-700 text-lg md:text-xl mb-8 leading-relaxed">
-            Especialistas em desenvolvimento web, mobile, agentes de IA e automações para acelerar o crescimento do seu negócio.
-          </p>
+          <h2 className="text-gray-700 text-lg md:text-xl mb-8 leading-relaxed">
+          Web, mobile e IA plug-and-play: valide seu produto mínimo viável em semanas e mantenha 100 % da propriedade, sem lock-in.
+          </h2>
           <div className="flex flex-wrap gap-4">
             <Button className="bg-primary hover:bg-primary/90 text-white px-6 py-6 text-lg shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all" onClick={() => openBudgetModal("mvp")}>
-              Iniciar projeto
+              Orçamento em até 48h
               <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button variant="outline" className="border-2 border-secondary text-secondary hover:bg-secondary/10 px-6 py-6 text-lg transition-colors" onClick={openCalendlyModal}>
-              Agendar conversa
             </Button>
           </div>
           
@@ -76,8 +73,6 @@ const Hero = () => {
       </div>
 
       <BudgetRequestModal open={isBudgetModalOpen} onOpenChange={setIsBudgetModalOpen} service={selectedService} />
-      
-      <CalendlyModal open={isCalendlyModalOpen} onOpenChange={setIsCalendlyModalOpen} />
     </section>;
 };
 export default Hero;
