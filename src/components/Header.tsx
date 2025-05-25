@@ -96,45 +96,59 @@ const Header = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
-          <a href="#about" onClick={(e) => smoothScroll(e, 'about')} className="text-gray-700 hover:text-primary font-medium transition-colors relative nav-link">Sobre</a>
-          <a href="#services" onClick={(e) => smoothScroll(e, 'services')} className="text-gray-700 hover:text-primary font-medium transition-colors relative nav-link">Serviços</a>
-          <a href="#differentials" onClick={(e) => smoothScroll(e, 'differentials')} className="text-gray-700 hover:text-primary font-medium transition-colors relative nav-link">Diferenciais</a>
-          <a href="#cases" onClick={(e) => smoothScroll(e, 'cases')} className="text-gray-700 hover:text-primary font-medium transition-colors relative nav-link">Casos</a>
-          <a href="#faq" onClick={(e) => smoothScroll(e, 'faq')} className="text-gray-700 hover:text-primary font-medium transition-colors relative nav-link">FAQ</a>
-          <Button 
-            className="bg-primary hover:bg-primary/90 text-white shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all"
-            onClick={openBudgetModal}
-          >
-            Começar agora
-          </Button>
-        </nav>
+  <a href="#about" onClick={(e) => smoothScroll(e, 'about')} className="text-gray-700 hover:text-primary font-medium transition-colors relative nav-link">Sobre</a>
+  <a href="#services" onClick={(e) => smoothScroll(e, 'services')} className="text-gray-700 hover:text-primary font-medium transition-colors relative nav-link">Serviços</a>
+  <a href="#differentials" onClick={(e) => smoothScroll(e, 'differentials')} className="text-gray-700 hover:text-primary font-medium transition-colors relative nav-link">Diferenciais</a>
+  <a href="#cases" onClick={(e) => smoothScroll(e, 'cases')} className="text-gray-700 hover:text-primary font-medium transition-colors relative nav-link">Casos</a>
+  <a href="#faq" onClick={(e) => smoothScroll(e, 'faq')} className="text-gray-700 hover:text-primary font-medium transition-colors relative nav-link">FAQ</a>
+  <Button 
+    className="bg-primary hover:bg-primary/90 text-white shadow-md shadow-primary/20 hover:shadow-lg hover:shadow-primary/30 transition-all"
+    onClick={openBudgetModal}
+  >
+    Começar agora
+  </Button>
+  <Button
+    variant="outline"
+    className="ml-2 border-primary text-primary hover:bg-primary/10"
+    onClick={() => navigate('/ClientLogin')}
+  >
+    Área do Cliente
+  </Button>
+</nav>
 
         {/* Mobile Menu */}
         {isMenuOpen && <div className="md:hidden absolute top-20 left-0 right-0 bg-white shadow-xl z-50 border-t animate-fade-in">
-            <div className="flex flex-col p-6 space-y-6">
-              <a href="#about" onClick={(e) => smoothScroll(e, 'about')} className="p-2 text-lg text-gray-700 hover:text-primary font-medium transition-colors border-b border-gray-100 pb-4">
-                Sobre
-              </a>
-              <a href="#services" onClick={(e) => smoothScroll(e, 'services')} className="p-2 text-lg text-gray-700 hover:text-primary font-medium transition-colors border-b border-gray-100 pb-4">
-                Serviços
-              </a>
-              <a href="#differentials" onClick={(e) => smoothScroll(e, 'differentials')} className="p-2 text-lg text-gray-700 hover:text-primary font-medium transition-colors border-b border-gray-100 pb-4">
-                Diferenciais
-              </a>
-              <a href="#cases" onClick={(e) => smoothScroll(e, 'cases')} className="p-2 text-lg text-gray-700 hover:text-primary font-medium transition-colors border-b border-gray-100 pb-4">
-                Casos
-              </a>
-              <a href="#faq" onClick={(e) => smoothScroll(e, 'faq')} className="p-2 text-lg text-gray-700 hover:text-primary font-medium transition-colors border-b border-gray-100 pb-4">
-                FAQ
-              </a>
-              <Button 
-                className="bg-primary hover:bg-primary/90 text-white w-full py-6 shadow-md shadow-primary/20" 
-                onClick={openBudgetModal}
-              >
-                Contato
-              </Button>
-            </div>
-          </div>}
+  <div className="flex flex-col p-6 space-y-6">
+    <a href="#about" onClick={(e) => smoothScroll(e, 'about')} className="p-2 text-lg text-gray-700 hover:text-primary font-medium transition-colors border-b border-gray-100 pb-4">
+      Sobre
+    </a>
+    <a href="#services" onClick={(e) => smoothScroll(e, 'services')} className="p-2 text-lg text-gray-700 hover:text-primary font-medium transition-colors border-b border-gray-100 pb-4">
+      Serviços
+    </a>
+    <a href="#differentials" onClick={(e) => smoothScroll(e, 'differentials')} className="p-2 text-lg text-gray-700 hover:text-primary font-medium transition-colors border-b border-gray-100 pb-4">
+      Diferenciais
+    </a>
+    <a href="#cases" onClick={(e) => smoothScroll(e, 'cases')} className="p-2 text-lg text-gray-700 hover:text-primary font-medium transition-colors border-b border-gray-100 pb-4">
+      Casos
+    </a>
+    <a href="#faq" onClick={(e) => smoothScroll(e, 'faq')} className="p-2 text-lg text-gray-700 hover:text-primary font-medium transition-colors border-b border-gray-100 pb-4">
+      FAQ
+    </a>
+    <Button 
+      className="bg-primary hover:bg-primary/90 text-white w-full py-6 shadow-md shadow-primary/20" 
+      onClick={openBudgetModal}
+    >
+      Contato
+    </Button>
+    <Button
+      variant="outline"
+      className="w-full border-primary text-primary mt-2"
+      onClick={() => { setIsMenuOpen(false); navigate('/ClientLogin'); }}
+    >
+      Área do Cliente
+    </Button>
+  </div>
+</div>}
       </div>
 
       <BudgetRequestModal 

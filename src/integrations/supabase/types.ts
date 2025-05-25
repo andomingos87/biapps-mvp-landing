@@ -141,6 +141,30 @@ export type Database = {
         }
         Relationships: []
       }
+      clients: {
+        Row: {
+          id: string;
+          name: string;
+          email: string;
+          password: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          email: string;
+          password: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          email?: string;
+          password?: string;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       talent_applications: {
         Row: {
           additional_info: string | null

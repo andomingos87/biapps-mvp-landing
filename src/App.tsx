@@ -12,6 +12,10 @@ import AIAgents from "./pages/AIAgents";
 import Automation from "./pages/Automation";
 import AdminCaseStudies from "./pages/AdminCaseStudies";
 import Auth from "./pages/Auth";
+import ClientLogin from "./pages/ClientLogin";
+import ClientDashboard from "./pages/ClientDashboard";
+import AdminClients from "./pages/AdminClients";
+import ClientRoute from "@/components/ClientRoute";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +33,13 @@ const App = () => (
           <Route path="/automation" element={<Automation />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/admin/cases" element={<AdminCaseStudies />} />
+          <Route path="/ClientLogin" element={<ClientLogin />} />
+          <Route path="/ClientDashboard" element={
+  <ClientRoute>
+    <ClientDashboard />
+  </ClientRoute>
+} />
+          <Route path="/admin/clients" element={<AdminClients />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
